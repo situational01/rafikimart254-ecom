@@ -20,9 +20,9 @@
     .dot-active { background: #065f46 !important; width: 24px !important; border-radius: 9999px; }
     .star { color: #d1d5db; font-size: 1.2rem; }
     .star.filled { color: #fbbf24; }
-    /* Mobile category scroll */
     .category-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .category-scroll::-webkit-scrollbar { display: none; }
+    .hero-slide-bg { background-size: cover; background-position: center; background-repeat: no-repeat; }
   </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -34,23 +34,15 @@
   <!-- HEADER -->
   <header class="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-30 border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4">
-      <!-- Top row: logo and icons -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i class="fas fa-store-alt text-green-700 text-2xl md:text-3xl"></i>
           <span class="text-xl md:text-2xl font-bold text-gray-800 tracking-tight">Rafiki<span class="text-green-700">Mart</span><span class="text-xs text-gray-500 ml-1 font-normal">.ke</span></span>
         </div>
         <div class="flex items-center gap-3 md:gap-5">
-          <!-- Desktop Search (hidden on mobile) -->
           <div class="relative hidden md:block w-56 lg:w-64">
             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
             <input type="text" id="desktopSearchInput" placeholder="Search products..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
-          </div>
-          <!-- Desktop Price Filter (hidden on mobile) -->
-          <div class="hidden md:flex items-center gap-2">
-            <input type="number" id="desktopMinPrice" placeholder="Min KES" class="w-20 lg:w-24 px-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
-            <span class="text-gray-400">–</span>
-            <input type="number" id="desktopMaxPrice" placeholder="Max KES" class="w-20 lg:w-24 px-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
           </div>
           <div class="relative">
             <button id="accountBtn" class="flex items-center gap-1 md:gap-2 text-gray-700 hover:text-green-700 transition">
@@ -69,37 +61,40 @@
           </button>
         </div>
       </div>
-      <!-- Mobile Search & Price Filter (visible only on mobile) -->
-      <div class="md:hidden mt-3 space-y-2">
+      <!-- Mobile Search (only) -->
+      <div class="md:hidden mt-3">
         <div class="relative">
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
           <input type="text" id="mobileSearchInput" placeholder="Search products..." class="w-full pl-9 pr-3 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm">
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="number" id="mobileMinPrice" placeholder="Min KES" class="flex-1 px-3 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
-          <span class="text-gray-400">–</span>
-          <input type="number" id="mobileMaxPrice" placeholder="Max KES" class="flex-1 px-3 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
         </div>
       </div>
     </div>
   </header>
 
-  <!-- HERO CAROUSEL -->
+  <!-- HERO CAROUSEL with background images -->
   <section class="bg-gradient-to-b from-green-50/50 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 md:py-8">
       <div class="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-lg md:shadow-xl h-44 md:h-72 bg-gray-100">
         <div class="relative w-full h-full">
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-emerald-600 to-teal-500 text-white transition-opacity duration-700" id="slide1">
-            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">🔥 Limited Offer</span><h2 class="text-xl md:text-5xl font-bold">Electronics up to 30% OFF</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Tecno, Oraimo, Smart watches & more</p><button class="mt-2 md:mt-4 bg-white text-green-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Shop Now →</button></div><div class="text-4xl md:text-8xl">📱🎧</div>
+          <!-- Slide 1: Electronics -->
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 text-white transition-opacity duration-700 hero-slide-bg" id="slide1" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url('Products/beats_studio3.jpg');">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block backdrop-blur-sm">Limited Offer</span><h2 class="text-xl md:text-5xl font-bold drop-shadow-md">Electronics up to 30% OFF</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90 drop-shadow">Tecno, Oraimo, Smart watches & more</p><button class="mt-2 md:mt-4 bg-white text-green-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Shop Now →</button></div>
+            <div class="text-4xl md:text-8xl drop-shadow-md"></div>
           </div>
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-purple-700 to-pink-500 text-white opacity-0 transition-opacity duration-700" id="slide2">
-            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">✨ New Arrivals</span><h2 class="text-xl md:text-5xl font-bold">Jewelry & Accessories</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Gold plated, pearls, and leather bracelets</p><button class="mt-2 md:mt-4 bg-white text-purple-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Explore →</button></div><div class="text-4xl md:text-8xl">💎✨</div>
+          <!-- Slide 2: Jewelry -->
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 text-white opacity-0 transition-opacity duration-700 hero-slide-bg" id="slide2" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/1458867/pexels-photo-1458867.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block backdrop-blur-sm">New Arrivals</span><h2 class="text-xl md:text-5xl font-bold drop-shadow-md">Jewelry & Accessories</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90 drop-shadow">Gold plated, pearls, and leather bracelets</p><button class="mt-2 md:mt-4 bg-white text-purple-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Explore →</button></div>
+            <div class="text-4xl md:text-8xl drop-shadow-md"></div>
           </div>
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-blue-600 to-cyan-400 text-white opacity-0 transition-opacity duration-700" id="slide3">
-            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">💧 Self Care</span><h2 class="text-xl md:text-5xl font-bold">Skincare & Beauty</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Serums, lotions, and organic shea butter</p><button class="mt-2 md:mt-4 bg-white text-blue-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Glow Now →</button></div><div class="text-4xl md:text-8xl">🧴💧</div>
+          <!-- Slide 3: Skincare -->
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 text-white opacity-0 transition-opacity duration-700 hero-slide-bg" id="slide3" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block backdrop-blur-sm">Self Care</span><h2 class="text-xl md:text-5xl font-bold drop-shadow-md">Skincare & Beauty</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90 drop-shadow">Serums, lotions, and organic shea butter</p><button class="mt-2 md:mt-4 bg-white text-blue-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Glow Now →</button></div>
+            <div class="text-4xl md:text-8xl drop-shadow-md"></div>
           </div>
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-amber-600 to-orange-400 text-white opacity-0 transition-opacity duration-700" id="slide4">
-            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">🍳 Home Essentials</span><h2 class="text-xl md:text-5xl font-bold">Kitchen & Home</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Blenders, cookware, and appliances</p><button class="mt-2 md:mt-4 bg-white text-amber-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Upgrade →</button></div><div class="text-4xl md:text-8xl">🍳🥤</div>
+          <!-- Slide 4: Kitchen -->
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 text-white opacity-0 transition-opacity duration-700 hero-slide-bg" id="slide4" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url('https://images.pexels.com/photos/4253312/pexels-photo-4253312.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block backdrop-blur-sm">Home Essentials</span><h2 class="text-xl md:text-5xl font-bold drop-shadow-md">Kitchen & Home</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90 drop-shadow">Blenders, cookware, and appliances</p><button class="mt-2 md:mt-4 bg-white text-amber-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Upgrade →</button></div>
+            <div class="text-4xl md:text-8xl drop-shadow-md"></div>
           </div>
         </div>
         <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10">
@@ -122,23 +117,20 @@
   <!-- MAIN CONTENT -->
   <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-5 md:py-8 w-full">
     <div class="flex flex-col gap-5 md:flex-row md:gap-8">
-      <!-- Category Sidebar: horizontal scroll on mobile, sticky sidebar on desktop -->
       <aside class="md:w-64 flex-shrink-0">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-5 md:sticky md:top-24">
           <h3 class="font-semibold text-gray-700 mb-3 flex items-center text-sm md:text-base"><i class="fas fa-list-ul mr-2 text-green-600"></i>Shop by Category</h3>
-          <!-- Mobile: horizontally scrollable -->
           <div class="category-scroll flex md:block overflow-x-auto pb-2 md:pb-0 gap-2 md:gap-0 md:space-y-1">
-            <button data-category="all" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition bg-green-700 text-white category-active">✨ All Products</button>
-            <button data-category="Electronics" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">📱 Electronics</button>
-            <button data-category="Jewelry" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">💎 Jewelry</button>
-            <button data-category="Skincare" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">🧴 Skincare</button>
-            <button data-category="Kitchen" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">🍳 Kitchen</button>
-            <button data-category="Bags" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">👜 Bags</button>
-            <button data-category="Fast-moving" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">⚡ Fast Moving</button>
+            <button data-category="all" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition bg-green-700 text-white category-active">All Products</button>
+            <button data-category="Electronics" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">Electronics</button>
+            <button data-category="Jewelry" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">Jewelry</button>
+            <button data-category="Skincare" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">Skincare</button>
+            <button data-category="Kitchen" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">Kitchen</button>
+            <button data-category="Bags" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">Bags</button>
+            <button data-category="Fast-moving" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">Fast Moving</button>
           </div>
         </div>
       </aside>
-      <!-- Products Grid -->
       <div class="flex-1">
         <div class="flex items-center justify-between mb-4 md:mb-5">
           <h2 id="categoryTitle" class="text-xl md:text-2xl font-bold text-gray-800">All Products</h2>
@@ -151,10 +143,11 @@
     </div>
   </main>
 
+  <!-- FOOTER -->
   <footer class="bg-white border-t border-gray-100 py-6 md:py-8 text-xs md:text-sm text-gray-500 mt-6 md:mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center md:flex justify-between items-center">
       <p>© 2026 RafikiMart254 — Kenya's trusted online marketplace</p>
-      <p class="mt-2 md:mt-0"><i class="fas fa-phone-alt mr-1"></i> +254 700 123456 • support@rafikimart.ke</p>
+      <p class="mt-2 md:mt-0"><i class="fas fa-phone-alt mr-1"></i> +254 708 614 269 • support@rafikimart.ke</p>
     </div>
   </footer>
 
@@ -187,9 +180,9 @@
         <div class="mb-4">
           <label class="block text-sm font-medium mb-2">Delivery Method *</label>
           <select id="deliveryMethod" class="w-full border rounded-lg px-3 py-2 text-sm">
-            <option value="pickup" data-fee="50">📍 Pickup in Nairobi CBD - KES 50</option>
-            <option value="nairobi" data-fee="170">🚚 Delivery within Nairobi - KES 170</option>
-            <option value="outside" data-fee="300">✈️ Delivery outside Nairobi - KES 300</option>
+            <option value="pickup" data-fee="50">Pickup in Nairobi CBD - KES 50</option>
+            <option value="nairobi" data-fee="170">Delivery within Nairobi - KES 170</option>
+            <option value="outside" data-fee="300">Delivery outside Nairobi - KES 300</option>
           </select>
         </div>
         <div class="flex justify-between font-bold text-lg mb-4">
@@ -257,21 +250,19 @@
     "use strict";
     // ---------- DATA ----------
     let products = [], reviews = [], orders = [], users = [], cart = [], currentUser = null;
-    let activeCategory = 'all', searchTerm = '', minPrice = null, maxPrice = null;
+    let activeCategory = 'all', searchTerm = '';
     let currentMedia = [], currentGalleryIndex = 0, currentDetailProductId = null, currentRating = 0;
     const defaultProducts = [ 
-      { id: 1, name: "Tecno Spark 10C 128GB", price: 14500, category: "Electronics", media: [{type:'image', url:'https://placehold.co/400x400/e2e8f0/475156?text=📱+Tecno'}], badge: "Bestseller", description: "6.6” HD+ display, 5000mAh battery.", features: ["128GB storage", "50MP camera", "Fingerprint", "Android 13"] },
-      { id: 2, name: "Oraimo Bluetooth Earphones", price: 1850, category: "Electronics", media: [{type:'image', url:'https://placehold.co/400x400/e2e8f0/475156?text=🎧+Oraimo'}], badge: "Fast moving", description: "True wireless earbuds with 24h playtime.", features: ["Bluetooth 5.3", "Touch control", "Type-C charging", "IPX5"] },
-      { id: 3, name: "Gold Plated Necklace Set", price: 2200, category: "Jewelry", media: [{type:'image', url:'https://placehold.co/400x400/fef3c7/92400e?text=💎+Necklace'}], badge: "Trending", description: "Elegant gold-plated necklace with earrings.", features: ["18K plating", "Adjustable", "Hypoallergenic", "Gift box"] },
-      { id: 4, name: "Nivea Body Lotion 400ml", price: 850, category: "Skincare", media: [{type:'image', url:'https://placehold.co/400x400/dbeafe/1e3a8a?text=🧴+Nivea'}], badge: "Popular", description: "Deep moisture serum with almond oil.", features: ["Dry skin", "48h moisture", "Fast absorbing", "400ml"] },
+      { id: 1, name: "Tecno Spark 10C 128GB", price: 14500, category: "Electronics", media: [{type:'image', url:'https://placehold.co/400x400/e2e8f0/475156?text=+Tecno'}], badge: "Bestseller", description: "6.6” HD+ display, 5000mAh battery.", features: ["128GB storage", "50MP camera", "Fingerprint", "Android 13"] },
+      { id: 2, name: "Oraimo Bluetooth Earphones", price: 1850, category: "Electronics", media: [{type:'image', url:'https://placehold.co/400x400/e2e8f0/475156?text=+Oraimo'}], badge: "Fast moving", description: "True wireless earbuds with 24h playtime.", features: ["Bluetooth 5.3", "Touch control", "Type-C charging", "IPX5"] },
+      { id: 3, name: "Gold Plated Necklace Set", price: 2200, category: "Jewelry", media: [{type:'image', url:'https://placehold.co/400x400/fef3c7/92400e?text=+Necklace'}], badge: "Trending", description: "Elegant gold-plated necklace with earrings.", features: ["18K plating", "Adjustable", "Hypoallergenic", "Gift box"] },
+      { id: 4, name: "Nivea Body Lotion 400ml", price: 850, category: "Skincare", media: [{type:'image', url:'https://placehold.co/400x400/dbeafe/1e3a8a?text=+Nivea'}], badge: "Popular", description: "Deep moisture serum with almond oil.", features: ["Dry skin", "48h moisture", "Fast absorbing", "400ml"] },
     ];
 
     // DOM elements
     const productsContainer = document.getElementById('productsContainer');
     const categoryTitle = document.getElementById('categoryTitle'), productCountSpan = document.getElementById('productCount');
     const searchInputs = [document.getElementById('desktopSearchInput'), document.getElementById('mobileSearchInput')];
-    const minPriceInputs = [document.getElementById('desktopMinPrice'), document.getElementById('mobileMinPrice')];
-    const maxPriceInputs = [document.getElementById('desktopMaxPrice'), document.getElementById('mobileMaxPrice')];
     const searchIndicator = document.getElementById('searchIndicator'), noResultsDiv = document.getElementById('noResults');
     const cartCountSpan = document.getElementById('cartCount'), cartItemsDiv = document.getElementById('cartItemsList'), cartTotalSpan = document.getElementById('cartTotalAmount');
     const checkoutBtn = document.getElementById('checkoutBtn'), clearCartBtn = document.getElementById('clearCartBtn');
@@ -324,8 +315,6 @@
         const term = searchTerm.toLowerCase();
         filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || p.description?.toLowerCase().includes(term));
       }
-      if (minPrice !== null && !isNaN(minPrice)) filtered = filtered.filter(p => p.price >= minPrice);
-      if (maxPrice !== null && !isNaN(maxPrice)) filtered = filtered.filter(p => p.price <= maxPrice);
       return filtered;
     }
 
@@ -333,11 +322,8 @@
       const filtered = getFilteredProducts();
       categoryTitle.textContent = activeCategory === 'all' ? 'All Products' : activeCategory;
       productCountSpan.textContent = `${filtered.length} item${filtered.length!==1?'s':''}`;
-      searchIndicator.classList.toggle('hidden', !searchTerm && minPrice === null && maxPrice === null);
-      let indicatorText = '';
-      if (searchTerm) indicatorText += `Search: "${searchTerm}" `;
-      if (minPrice !== null || maxPrice !== null) indicatorText += `Price: ${minPrice || 'Any'} – ${maxPrice || 'Any'} KES`;
-      searchIndicator.innerHTML = indicatorText ? `<i class="fas fa-filter mr-1"></i> ${indicatorText} (${filtered.length})` : '';
+      searchIndicator.classList.toggle('hidden', !searchTerm);
+      if (searchTerm) searchIndicator.innerHTML = `<i class="fas fa-search mr-1"></i> Results for "<strong>${searchTerm}</strong>" (${filtered.length})`;
       if (filtered.length === 0) { productsContainer.innerHTML = ''; noResultsDiv.classList.remove('hidden'); return; }
       noResultsDiv.classList.add('hidden');
       productsContainer.innerHTML = filtered.map(p => {
@@ -439,9 +425,9 @@
       cart.forEach(item => { message += `- ${item.name} x${item.quantity} @ KES ${item.price.toLocaleString()} = KES ${(item.price*item.quantity).toLocaleString()}%0A`; });
       const total = cart.reduce((s,i)=>s+(i.price*i.quantity),0);
       message += `%0A*Total: KES ${total.toLocaleString()}*%0A`;
-      message += `%0A📞 *Please provide your delivery details (Name, Phone, Address) when you send this message.*%0A`;
+      message += `%0A*Please provide your delivery details (Name, Phone, Address) when you send this message.*%0A`;
       message += `%0A_Payment: Pay on Delivery_`;
-      const phoneNumber = '254700123456'; // ⚠️ REPLACE WITH YOUR ACTUAL WHATSAPP NUMBER
+      const phoneNumber = '254708614269';
       const url = `https://wa.me/${phoneNumber}?text=${message}`;
       window.open(url, '_blank');
     }
@@ -546,18 +532,17 @@
     dots.forEach((d,i)=> d.onclick = ()=> { clearInterval(slideInterval); showSlide(i); slideInterval=setInterval(nextSlide,6000); });
     showSlide(0); slideInterval = setInterval(nextSlide, 6000);
 
-    function syncInputs() {
+    function syncSearchInputs() {
       const desktopSearch = document.getElementById('desktopSearchInput');
       const mobileSearch = document.getElementById('mobileSearchInput');
-      const desktopMin = document.getElementById('desktopMinPrice');
-      const mobileMin = document.getElementById('mobileMinPrice');
-      const desktopMax = document.getElementById('desktopMaxPrice');
-      const mobileMax = document.getElementById('mobileMaxPrice');
-      searchInputs.forEach(inp => inp.addEventListener('input', e => { searchTerm = e.target.value; if (e.target === desktopSearch) mobileSearch.value = searchTerm; else desktopSearch.value = searchTerm; renderProducts(); }));
-      minPriceInputs.forEach(inp => inp.addEventListener('input', e => { minPrice = e.target.value ? parseFloat(e.target.value) : null; if (e.target === desktopMin) mobileMin.value = e.target.value; else desktopMin.value = e.target.value; renderProducts(); }));
-      maxPriceInputs.forEach(inp => inp.addEventListener('input', e => { maxPrice = e.target.value ? parseFloat(e.target.value) : null; if (e.target === desktopMax) mobileMax.value = e.target.value; else desktopMax.value = e.target.value; renderProducts(); }));
+      searchInputs.forEach(inp => inp.addEventListener('input', e => {
+        searchTerm = e.target.value;
+        if (e.target === desktopSearch) mobileSearch.value = searchTerm;
+        else desktopSearch.value = searchTerm;
+        renderProducts();
+      }));
     }
-    syncInputs();
+    syncSearchInputs();
 
     document.querySelectorAll('.category-filter-btn').forEach(b => b.addEventListener('click', function(){ document.querySelectorAll('.category-filter-btn').forEach(bt=>bt.classList.remove('category-active','bg-green-700','text-white')); this.classList.add('category-active','bg-green-700','text-white'); activeCategory = this.dataset.category; renderProducts(); }));
     window.addEventListener('scroll', ()=> backToTopBtn.classList.toggle('opacity-0', scrollY<=300));
