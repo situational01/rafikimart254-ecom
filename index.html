@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>SokoBazaar • Premium Kenyan Shopping | Pay on Delivery</title>
+  <title>RafikiMart254 • Premium Kenyan Shopping | Pay on Delivery</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <i class="fas fa-store-alt text-green-700 text-3xl"></i>
-        <span class="text-2xl font-bold text-gray-800 tracking-tight">Soko<span class="text-green-700">Bazaar</span><span class="text-xs text-gray-500 ml-1 font-normal">.ke</span></span>
+        <span class="text-2xl font-bold text-gray-800 tracking-tight">Rafiki<span class="text-green-700">Mart</span><span class="text-xs text-gray-500 ml-1 font-normal">.ke</span></span>
       </div>
       <div class="flex items-center gap-4 md:gap-6">
         <div class="relative hidden md:block w-64">
@@ -131,8 +131,8 @@
 
   <footer class="bg-white border-t border-gray-100 py-8 text-sm text-gray-500 mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center md:flex justify-between items-center">
-      <p>© 2026 SokoBazaar.ke — Kenya's trusted online marketplace</p>
-      <p class="mt-2 md:mt-0"><i class="fas fa-phone-alt mr-1"></i> +254 700 123456 • support@sokobazaar.ke</p>
+      <p>© 2026 RafikiMart254 — Kenya's trusted online marketplace</p>
+      <p class="mt-2 md:mt-0"><i class="fas fa-phone-alt mr-1"></i> +254 700 123456 • support@rafikimart.ke</p>
     </div>
   </footer>
 
@@ -157,7 +157,36 @@
   </div>
 
   <!-- CHECKOUT MODAL -->
-  <div id="checkoutModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"><div class="p-5 border-b sticky top-0 bg-white flex justify-between"><h3 class="font-bold text-xl"><i class="fas fa-truck text-green-700 mr-2"></i>Pay on Delivery</h3><button id="closeCheckoutModal" class="text-gray-500"><i class="fas fa-times text-xl"></i></button></div><div class="p-5"><div id="checkoutItems" class="space-y-2 max-h-52 overflow-y-auto text-sm border-b pb-3 mb-3"></div><div class="flex justify-between font-bold text-lg mb-4">Total: <span id="checkoutTotal">KES 0</span></div><form id="deliveryForm"><div class="grid grid-cols-1 gap-3"><div><label class="block text-sm">Full Name *</label><input type="text" id="fullName" class="w-full border rounded px-3 py-2" required></div><div><label class="block text-sm">Phone (Safaricom) *</label><input type="tel" id="phone" class="w-full border rounded px-3 py-2" required></div><div><label class="block text-sm">Delivery Address *</label><textarea id="address" rows="2" class="w-full border rounded px-3 py-2" required></textarea></div></div><div class="mt-4 bg-green-50 p-3 rounded-lg"><i class="fas fa-shield-alt text-green-700 mr-2"></i><span class="font-medium">Cash on Delivery</span><span class="text-sm text-gray-600 block">Pay when you receive your items.</span></div><button type="submit" class="mt-5 w-full bg-green-700 text-white font-bold py-3 rounded-lg">Confirm Order</button></form><p id="orderSuccessMsg" class="hidden text-green-700 font-medium mt-3 text-center"><i class="fas fa-check-circle"></i> Order placed! Track it in My Orders.</p></div></div></div>
+  <div id="checkoutModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="p-5 border-b sticky top-0 bg-white flex justify-between"><h3 class="font-bold text-xl"><i class="fas fa-truck text-green-700 mr-2"></i>Pay on Delivery</h3><button id="closeCheckoutModal" class="text-gray-500"><i class="fas fa-times text-xl"></i></button></div>
+      <div class="p-5">
+        <div id="checkoutItems" class="space-y-2 max-h-52 overflow-y-auto text-sm border-b pb-3 mb-3"></div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Delivery Method *</label>
+          <select id="deliveryMethod" class="w-full border rounded-lg px-3 py-2 text-sm">
+            <option value="pickup" data-fee="50">📍 Pickup in Nairobi CBD - KES 50</option>
+            <option value="nairobi" data-fee="170">🚚 Delivery within Nairobi - KES 170</option>
+            <option value="outside" data-fee="300">✈️ Delivery outside Nairobi - KES 300</option>
+          </select>
+        </div>
+        <div class="flex justify-between font-bold text-lg mb-4">
+          <span>Total:</span>
+          <span id="checkoutTotal">KES 0</span>
+        </div>
+        <form id="deliveryForm">
+          <div class="grid grid-cols-1 gap-3">
+            <div><label class="block text-sm">Full Name *</label><input type="text" id="fullName" class="w-full border rounded px-3 py-2" required></div>
+            <div><label class="block text-sm">Phone (Safaricom) *</label><input type="tel" id="phone" class="w-full border rounded px-3 py-2" required></div>
+            <div><label class="block text-sm">Delivery Address *</label><textarea id="address" rows="2" class="w-full border rounded px-3 py-2" required></textarea></div>
+          </div>
+          <div class="mt-4 bg-green-50 p-3 rounded-lg"><i class="fas fa-shield-alt text-green-700 mr-2"></i><span class="font-medium">Cash on Delivery</span><span class="text-sm text-gray-600 block">Pay when you receive your items.</span></div>
+          <button type="submit" class="mt-5 w-full bg-green-700 text-white font-bold py-3 rounded-lg">Confirm Order</button>
+        </form>
+        <p id="orderSuccessMsg" class="hidden text-green-700 font-medium mt-3 text-center"><i class="fas fa-check-circle"></i> Order placed! Track it in My Orders.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- PRODUCT DETAIL MODAL -->
   <div id="productDetailModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
@@ -237,6 +266,8 @@
     const reviewComment = document.getElementById('reviewComment'), submitReviewBtn = document.getElementById('submitReviewBtn'), reviewSubmitMsg = document.getElementById('reviewSubmitMsg'), reviewNotEligibleMsg = document.getElementById('reviewNotEligibleMsg');
     const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
     const reviewsSectionDiv = document.getElementById('reviewsSection');
+    const deliveryMethodSelect = document.getElementById('deliveryMethod');
+    const checkoutTotalSpan = document.getElementById('checkoutTotal');
 
     // Load data
     function loadStorage() {
@@ -375,7 +406,7 @@
 
     function orderViaWhatsApp() {
       if (cart.length === 0) { alert('Your cart is empty'); return; }
-      let message = `🛒 *New Order from SokoBazaar*%0A%0A`;
+      let message = `🛒 *New Order from RafikiMart254*%0A%0A`;
       message += `*Customer:* ${currentUser || 'Guest'}%0A`;
       message += `*Items:*%0A`;
       cart.forEach(item => { message += `- ${item.name} x${item.quantity} @ KES ${item.price.toLocaleString()} = KES ${(item.price*item.quantity).toLocaleString()}%0A`; });
@@ -384,31 +415,72 @@
       message += `%0A📞 *Please provide your delivery details (Name, Phone, Address) when you send this message.*%0A`;
       message += `%0A_Payment: Pay on Delivery (Lipa kwa Delivery)_`;
       const phoneNumber = '254700123456'; // ⚠️ REPLACE WITH YOUR ACTUAL WHATSAPP NUMBER
-      const url = `https://wa.me/${phoneNumber}?text=${message}`;
+      const url = `https://wa.me/${+254708614269}?text=${message}`;
       window.open(url, '_blank');
     }
 
     function placeOrder(deliveryDetails) {
-      const order = { id: Date.now() + Math.random(), userId: currentUser, items: cart.map(i=>({...i})), total: cart.reduce((s,i)=>s+(i.price*i.quantity),0), status: 'Processing', tracking: null, date: new Date().toISOString(), ...deliveryDetails };
+      const deliveryFee = parseInt(deliveryMethodSelect.selectedOptions[0].dataset.fee);
+      const deliveryMethod = deliveryMethodSelect.value;
+      const subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0);
+      const total = subtotal + deliveryFee;
+      const order = {
+        id: Date.now() + Math.random(),
+        userId: currentUser,
+        items: cart.map(i => ({...i})),
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        deliveryMethod: deliveryMethod,
+        total: total,
+        status: 'Processing',
+        tracking: null,
+        date: new Date().toISOString(),
+        ...deliveryDetails
+      };
       orders.push(order); saveOrders();
       clearCart(); closeCart();
       document.getElementById('orderSuccessMsg').classList.remove('hidden');
-      setTimeout(()=>{ checkoutModal.classList.add('hidden'); }, 2500);
+      setTimeout(() => { checkoutModal.classList.add('hidden'); }, 2500);
     }
+
+    function updateCheckoutTotal() {
+      const subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0);
+      const fee = parseInt(deliveryMethodSelect.selectedOptions[0].dataset.fee);
+      const total = subtotal + fee;
+      checkoutTotalSpan.textContent = `KES ${total.toLocaleString()}`;
+    }
+
+    function openCheckoutModal() {
+      if (!cart.length) return;
+      document.getElementById('checkoutItems').innerHTML = cart.map(i => 
+        `<div class="flex justify-between"><span>${i.name} x${i.quantity}</span><span>KES ${(i.price*i.quantity).toLocaleString()}</span></div>`
+      ).join('');
+      updateCheckoutTotal();
+      checkoutModal.classList.remove('hidden');
+      closeCart();
+    }
+
+    deliveryMethodSelect.addEventListener('change', updateCheckoutTotal);
+
     document.getElementById('deliveryForm').addEventListener('submit', e => {
       e.preventDefault();
       if (!currentUser) { alert('Please sign in to place an order.'); return; }
-      const details = { fullName: document.getElementById('fullName').value, phone: document.getElementById('phone').value, address: document.getElementById('address').value };
+      const details = {
+        fullName: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+      };
       placeOrder(details);
     });
 
     function renderOrdersModal() {
-      const userOrders = orders.filter(o=>o.userId===currentUser).sort((a,b)=>new Date(b.date)-new Date(a.date));
+      const userOrders = orders.filter(o => o.userId === currentUser).sort((a,b) => new Date(b.date) - new Date(a.date));
       const container = document.getElementById('ordersList');
       if (!userOrders.length) { container.innerHTML = '<p class="text-gray-400 text-center py-8">No orders yet.</p>'; return; }
       container.innerHTML = userOrders.map(order => {
         const statusSteps = ['Processing', 'Shipped', 'Delivered'];
         const currentIdx = statusSteps.indexOf(order.status);
+        const deliveryMethodText = order.deliveryMethod === 'pickup' ? 'Pickup CBD' : (order.deliveryMethod === 'nairobi' ? 'Nairobi Delivery' : 'Outside Nairobi');
         const itemsHtml = order.items.map(item => `
           <div class="flex justify-between items-center text-sm">
             <span>${item.name} x${item.quantity}</span>
@@ -419,9 +491,16 @@
           </div>
         `).join('');
         return `<div class="border rounded-xl p-5 bg-gray-50">
-          <div class="flex justify-between items-start"><div><span class="font-bold">Order #${order.id.toString().slice(-6)}</span><p class="text-xs text-gray-500">${new Date(order.date).toLocaleString()}</p></div><span class="px-3 py-1 rounded-full text-xs font-medium ${order.status==='Delivered'?'bg-green-100 text-green-700':order.status==='Shipped'?'bg-blue-100 text-blue-700':'bg-yellow-100 text-yellow-700'}">${order.status}</span></div>
+          <div class="flex justify-between items-start">
+            <div><span class="font-bold">Order #${order.id.toString().slice(-6)}</span><p class="text-xs text-gray-500">${new Date(order.date).toLocaleString()}</p></div>
+            <span class="px-3 py-1 rounded-full text-xs font-medium ${order.status==='Delivered'?'bg-green-100 text-green-700':order.status==='Shipped'?'bg-blue-100 text-blue-700':'bg-yellow-100 text-yellow-700'}">${order.status}</span>
+          </div>
           <div class="mt-3 space-y-2">${itemsHtml}</div>
-          <div class="border-t mt-3 pt-3 font-semibold text-right">Total: KES ${order.total.toLocaleString()}</div>
+          <div class="border-t mt-3 pt-3 text-sm">
+            <div class="flex justify-between"><span>Subtotal:</span><span>KES ${(order.subtotal || order.total - (order.deliveryFee || 0)).toLocaleString()}</span></div>
+            <div class="flex justify-between"><span>Delivery (${deliveryMethodText}):</span><span>KES ${(order.deliveryFee || 0).toLocaleString()}</span></div>
+            <div class="flex justify-between font-semibold mt-1"><span>Total:</span><span>KES ${order.total.toLocaleString()}</span></div>
+          </div>
           ${order.tracking ? `<p class="text-sm mt-2"><i class="fas fa-truck mr-1"></i> Tracking: ${order.tracking}</p>` : ''}
           <div class="mt-4 flex items-center justify-between"><div class="flex-1 flex items-center">${statusSteps.map((step,i)=>`<div class="flex-1 text-center"><div class="w-6 h-6 mx-auto rounded-full flex items-center justify-center text-xs ${i<=currentIdx?'bg-green-600 text-white':'bg-gray-300'}">${i+1}</div><span class="text-xs mt-1 block">${step}</span></div>`).join('')}</div></div>
         </div>`;
@@ -464,7 +543,7 @@
     window.addEventListener('scroll', ()=> backToTopBtn.classList.toggle('opacity-0', scrollY<=300));
     backToTopBtn.onclick = ()=> scrollTo({top:0,behavior:'smooth'});
     cartToggleBtn.onclick = openCart; closeCartBtn.onclick = closeCart; cartOverlay.onclick = closeCart;
-    checkoutBtn.onclick = ()=> { if(currentUser) { if(cart.length) { document.getElementById('checkoutItems').innerHTML = cart.map(i=>`<div class="flex justify-between"><span>${i.name} x${i.quantity}</span><span>KES ${(i.price*i.quantity).toLocaleString()}</span></div>`).join(''); document.getElementById('checkoutTotal').textContent = `KES ${cart.reduce((s,i)=>s+(i.price*i.quantity),0).toLocaleString()}`; checkoutModal.classList.remove('hidden'); closeCart(); } } else { openAuthModal(); } };
+    checkoutBtn.onclick = openCheckoutModal;
     clearCartBtn.onclick = clearCart;
     closeCheckoutModal.onclick = ()=> checkoutModal.classList.add('hidden');
     whatsappOrderBtn.addEventListener('click', orderViaWhatsApp);
