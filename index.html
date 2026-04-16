@@ -20,6 +20,9 @@
     .dot-active { background: #065f46 !important; width: 24px !important; border-radius: 9999px; }
     .star { color: #d1d5db; font-size: 1.2rem; }
     .star.filled { color: #fbbf24; }
+    /* Mobile category scroll */
+    .category-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .category-scroll::-webkit-scrollbar { display: none; }
   </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -30,113 +33,132 @@
 
   <!-- HEADER -->
   <header class="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-30 border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <i class="fas fa-store-alt text-green-700 text-3xl"></i>
-        <span class="text-2xl font-bold text-gray-800 tracking-tight">Rafiki<span class="text-green-700">Mart</span><span class="text-xs text-gray-500 ml-1 font-normal">.ke</span></span>
-      </div>
-      <div class="flex items-center gap-4 md:gap-6">
-        <div class="relative hidden md:block w-64">
-          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-          <input type="text" id="desktopSearchInput" placeholder="Search products..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4">
+      <!-- Top row: logo and icons -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-store-alt text-green-700 text-2xl md:text-3xl"></i>
+          <span class="text-xl md:text-2xl font-bold text-gray-800 tracking-tight">Rafiki<span class="text-green-700">Mart</span><span class="text-xs text-gray-500 ml-1 font-normal">.ke</span></span>
         </div>
-        <div class="relative">
-          <button id="accountBtn" class="flex items-center gap-2 text-gray-700 hover:text-green-700 transition">
-            <i class="fas fa-user-circle text-2xl"></i>
-            <span id="accountLabel" class="hidden sm:inline text-sm font-medium">Account</span>
-          </button>
-          <div id="accountDropdown" class="hidden absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 text-sm z-50 py-2">
-            <div id="loggedUserInfo" class="px-4 py-2 border-b text-gray-500 text-xs"></div>
-            <button id="myOrdersBtn" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3"><i class="fas fa-box text-gray-400 w-5"></i> My Orders</button>
-            <button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600 flex items-center gap-3"><i class="fas fa-sign-out-alt w-5"></i> Logout</button>
+        <div class="flex items-center gap-3 md:gap-5">
+          <!-- Desktop Search (hidden on mobile) -->
+          <div class="relative hidden md:block w-56 lg:w-64">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" id="desktopSearchInput" placeholder="Search products..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
           </div>
+          <!-- Desktop Price Filter (hidden on mobile) -->
+          <div class="hidden md:flex items-center gap-2">
+            <input type="number" id="desktopMinPrice" placeholder="Min KES" class="w-20 lg:w-24 px-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
+            <span class="text-gray-400">–</span>
+            <input type="number" id="desktopMaxPrice" placeholder="Max KES" class="w-20 lg:w-24 px-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
+          </div>
+          <div class="relative">
+            <button id="accountBtn" class="flex items-center gap-1 md:gap-2 text-gray-700 hover:text-green-700 transition">
+              <i class="fas fa-user-circle text-xl md:text-2xl"></i>
+              <span id="accountLabel" class="hidden sm:inline text-xs md:text-sm font-medium">Account</span>
+            </button>
+            <div id="accountDropdown" class="hidden absolute right-0 mt-2 w-48 md:w-56 bg-white rounded-xl shadow-xl border border-gray-100 text-sm z-50 py-2">
+              <div id="loggedUserInfo" class="px-4 py-2 border-b text-gray-500 text-xs"></div>
+              <button id="myOrdersBtn" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3"><i class="fas fa-box text-gray-400 w-5"></i> My Orders</button>
+              <button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-50 text-red-600 flex items-center gap-3"><i class="fas fa-sign-out-alt w-5"></i> Logout</button>
+            </div>
+          </div>
+          <button id="cartToggleBtn" class="relative p-2 text-gray-700 hover:text-green-700 transition">
+            <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+            <span id="cartCount" class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+          </button>
         </div>
-        <button id="cartToggleBtn" class="relative p-2 text-gray-700 hover:text-green-700 transition">
-          <i class="fas fa-shopping-cart text-xl"></i>
-          <span id="cartCount" class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
-        </button>
       </div>
-    </div>
-    <div class="md:hidden px-4 pb-3">
-      <div class="relative">
-        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-        <input type="text" id="mobileSearchInput" placeholder="Search..." class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm">
+      <!-- Mobile Search & Price Filter (visible only on mobile) -->
+      <div class="md:hidden mt-3 space-y-2">
+        <div class="relative">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input type="text" id="mobileSearchInput" placeholder="Search products..." class="w-full pl-9 pr-3 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm">
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="number" id="mobileMinPrice" placeholder="Min KES" class="flex-1 px-3 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
+          <span class="text-gray-400">–</span>
+          <input type="number" id="mobileMaxPrice" placeholder="Max KES" class="flex-1 px-3 py-2.5 rounded-full border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-green-200">
+        </div>
       </div>
     </div>
   </header>
 
   <!-- HERO CAROUSEL -->
   <section class="bg-gradient-to-b from-green-50/50 to-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 md:py-8">
-      <div class="relative rounded-3xl overflow-hidden shadow-xl h-52 md:h-72 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 md:py-8">
+      <div class="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-lg md:shadow-xl h-44 md:h-72 bg-gray-100">
         <div class="relative w-full h-full">
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-8 md:px-14 bg-gradient-to-r from-emerald-600 to-teal-500 text-white transition-opacity duration-700" id="slide1">
-            <div><span class="bg-white/20 text-xs px-3 py-1 rounded-full mb-2 inline-block">🔥 Limited Offer</span><h2 class="text-3xl md:text-5xl font-bold">Electronics up to 30% OFF</h2><p class="mt-2 text-sm md:text-base opacity-90">Tecno, Oraimo, Smart watches & more</p><button class="mt-4 bg-white text-green-700 px-6 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition">Shop Now →</button></div><div class="text-6xl md:text-8xl">📱🎧</div>
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-emerald-600 to-teal-500 text-white transition-opacity duration-700" id="slide1">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">🔥 Limited Offer</span><h2 class="text-xl md:text-5xl font-bold">Electronics up to 30% OFF</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Tecno, Oraimo, Smart watches & more</p><button class="mt-2 md:mt-4 bg-white text-green-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Shop Now →</button></div><div class="text-4xl md:text-8xl">📱🎧</div>
           </div>
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-8 md:px-14 bg-gradient-to-r from-purple-700 to-pink-500 text-white opacity-0 transition-opacity duration-700" id="slide2">
-            <div><span class="bg-white/20 text-xs px-3 py-1 rounded-full mb-2 inline-block">✨ New Arrivals</span><h2 class="text-3xl md:text-5xl font-bold">Jewelry & Accessories</h2><p class="mt-2 text-sm md:text-base opacity-90">Gold plated, pearls, and leather bracelets</p><button class="mt-4 bg-white text-purple-700 px-6 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition">Explore →</button></div><div class="text-6xl md:text-8xl">💎✨</div>
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-purple-700 to-pink-500 text-white opacity-0 transition-opacity duration-700" id="slide2">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">✨ New Arrivals</span><h2 class="text-xl md:text-5xl font-bold">Jewelry & Accessories</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Gold plated, pearls, and leather bracelets</p><button class="mt-2 md:mt-4 bg-white text-purple-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Explore →</button></div><div class="text-4xl md:text-8xl">💎✨</div>
           </div>
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-8 md:px-14 bg-gradient-to-r from-blue-600 to-cyan-400 text-white opacity-0 transition-opacity duration-700" id="slide3">
-            <div><span class="bg-white/20 text-xs px-3 py-1 rounded-full mb-2 inline-block">💧 Self Care</span><h2 class="text-3xl md:text-5xl font-bold">Skincare & Beauty</h2><p class="mt-2 text-sm md:text-base opacity-90">Serums, lotions, and organic shea butter</p><button class="mt-4 bg-white text-blue-700 px-6 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition">Glow Now →</button></div><div class="text-6xl md:text-8xl">🧴💧</div>
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-blue-600 to-cyan-400 text-white opacity-0 transition-opacity duration-700" id="slide3">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">💧 Self Care</span><h2 class="text-xl md:text-5xl font-bold">Skincare & Beauty</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Serums, lotions, and organic shea butter</p><button class="mt-2 md:mt-4 bg-white text-blue-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Glow Now →</button></div><div class="text-4xl md:text-8xl">🧴💧</div>
           </div>
-          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-8 md:px-14 bg-gradient-to-r from-amber-600 to-orange-400 text-white opacity-0 transition-opacity duration-700" id="slide4">
-            <div><span class="bg-white/20 text-xs px-3 py-1 rounded-full mb-2 inline-block">🍳 Home Essentials</span><h2 class="text-3xl md:text-5xl font-bold">Kitchen & Home</h2><p class="mt-2 text-sm md:text-base opacity-90">Blenders, cookware, and appliances</p><button class="mt-4 bg-white text-amber-700 px-6 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition">Upgrade →</button></div><div class="text-6xl md:text-8xl">🍳🥤</div>
+          <div class="carousel-slide absolute inset-0 flex items-center justify-between px-6 md:px-14 bg-gradient-to-r from-amber-600 to-orange-400 text-white opacity-0 transition-opacity duration-700" id="slide4">
+            <div><span class="bg-white/20 text-[10px] md:text-xs px-2 md:px-3 py-0.5 md:py-1 rounded-full mb-1 md:mb-2 inline-block">🍳 Home Essentials</span><h2 class="text-xl md:text-5xl font-bold">Kitchen & Home</h2><p class="mt-1 md:mt-2 text-xs md:text-base opacity-90">Blenders, cookware, and appliances</p><button class="mt-2 md:mt-4 bg-white text-amber-700 px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold shadow-md hover:shadow-lg transition">Upgrade →</button></div><div class="text-4xl md:text-8xl">🍳🥤</div>
           </div>
         </div>
-        <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+        <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10">
           <button class="carousel-dot w-2 h-2 rounded-full bg-white/60 transition-all" data-index="0"></button>
           <button class="carousel-dot w-2 h-2 rounded-full bg-white/60 transition-all" data-index="1"></button>
           <button class="carousel-dot w-2 h-2 rounded-full bg-white/60 transition-all" data-index="2"></button>
           <button class="carousel-dot w-2 h-2 rounded-full bg-white/60 transition-all" data-index="3"></button>
         </div>
-        <button id="carouselPrev" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur rounded-full p-3 text-white transition"><i class="fas fa-chevron-left"></i></button>
-        <button id="carouselNext" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur rounded-full p-3 text-white transition"><i class="fas fa-chevron-right"></i></button>
+        <button id="carouselPrev" class="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur rounded-full p-2 md:p-3 text-white transition"><i class="fas fa-chevron-left text-sm md:text-base"></i></button>
+        <button id="carouselNext" class="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur rounded-full p-2 md:p-3 text-white transition"><i class="fas fa-chevron-right text-sm md:text-base"></i></button>
       </div>
-      <div class="flex flex-wrap justify-center gap-3 mt-5">
-        <div class="flex items-center gap-2 bg-white shadow-sm px-4 py-2 rounded-full text-sm"><i class="fas fa-truck text-green-600"></i><span class="font-medium">Pay on Delivery</span><span class="text-green-700">• Lipa pole pole</span></div>
-        <div class="flex items-center gap-2 bg-white shadow-sm px-4 py-2 rounded-full text-sm"><i class="fas fa-shield-alt text-green-600"></i><span>Secure Checkout</span></div>
-        <div class="flex items-center gap-2 bg-white shadow-sm px-4 py-2 rounded-full text-sm"><i class="fas fa-mobile-alt text-green-600"></i><span>M‑Pesa Ready</span></div>
+      <div class="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-5">
+        <div class="flex items-center gap-1.5 md:gap-2 bg-white shadow-sm px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm"><i class="fas fa-truck text-green-600"></i><span class="font-medium">Pay on Delivery</span></div>
+        <div class="flex items-center gap-1.5 md:gap-2 bg-white shadow-sm px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm"><i class="fas fa-shield-alt text-green-600"></i><span>Secure Checkout</span></div>
+        <div class="flex items-center gap-1.5 md:gap-2 bg-white shadow-sm px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm"><i class="fas fa-mobile-alt text-green-600"></i><span>M‑Pesa Ready</span></div>
       </div>
     </div>
   </section>
 
   <!-- MAIN CONTENT -->
-  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
-    <div class="flex flex-col md:flex-row gap-8">
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-5 md:py-8 w-full">
+    <div class="flex flex-col gap-5 md:flex-row md:gap-8">
+      <!-- Category Sidebar: horizontal scroll on mobile, sticky sidebar on desktop -->
       <aside class="md:w-64 flex-shrink-0">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sticky top-24">
-          <h3 class="font-semibold text-gray-700 mb-4 flex items-center"><i class="fas fa-list-ul mr-2 text-green-600"></i>Shop by Category</h3>
-          <div class="space-y-1">
-            <button data-category="all" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition bg-green-700 text-white category-active">✨ All Products</button>
-            <button data-category="Electronics" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition hover:bg-gray-50">📱 Electronics</button>
-            <button data-category="Jewelry" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition hover:bg-gray-50">💎 Jewelry</button>
-            <button data-category="Skincare" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition hover:bg-gray-50">🧴 Skincare</button>
-            <button data-category="Kitchen" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition hover:bg-gray-50">🍳 Kitchen</button>
-            <button data-category="Bags" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition hover:bg-gray-50">👜 Bags</button>
-            <button data-category="Fast-moving" class="category-filter-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition hover:bg-gray-50">⚡ Fast Moving</button>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-5 md:sticky md:top-24">
+          <h3 class="font-semibold text-gray-700 mb-3 flex items-center text-sm md:text-base"><i class="fas fa-list-ul mr-2 text-green-600"></i>Shop by Category</h3>
+          <!-- Mobile: horizontally scrollable -->
+          <div class="category-scroll flex md:block overflow-x-auto pb-2 md:pb-0 gap-2 md:gap-0 md:space-y-1">
+            <button data-category="all" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition bg-green-700 text-white category-active">✨ All Products</button>
+            <button data-category="Electronics" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">📱 Electronics</button>
+            <button data-category="Jewelry" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">💎 Jewelry</button>
+            <button data-category="Skincare" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">🧴 Skincare</button>
+            <button data-category="Kitchen" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">🍳 Kitchen</button>
+            <button data-category="Bags" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">👜 Bags</button>
+            <button data-category="Fast-moving" class="category-filter-btn whitespace-nowrap md:whitespace-normal w-auto md:w-full text-left px-4 py-2 md:py-2.5 rounded-full md:rounded-xl text-sm font-medium transition hover:bg-gray-50">⚡ Fast Moving</button>
           </div>
         </div>
       </aside>
+      <!-- Products Grid -->
       <div class="flex-1">
-        <div class="flex items-center justify-between mb-5">
-          <h2 id="categoryTitle" class="text-2xl font-bold text-gray-800">All Products</h2>
-          <span id="productCount" class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full"></span>
+        <div class="flex items-center justify-between mb-4 md:mb-5">
+          <h2 id="categoryTitle" class="text-xl md:text-2xl font-bold text-gray-800">All Products</h2>
+          <span id="productCount" class="text-xs md:text-sm text-gray-500 bg-gray-100 px-2 md:px-3 py-1 rounded-full"></span>
         </div>
-        <div id="searchIndicator" class="mb-4 hidden text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-full inline-block"></div>
-        <div id="productsContainer" class="grid grid-cols-2 md:grid-cols-3 gap-5"></div>
-        <div id="noResults" class="hidden text-center py-16 text-gray-400">No products found. Try a different search.</div>
+        <div id="searchIndicator" class="mb-3 hidden text-xs md:text-sm text-gray-600 bg-gray-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full inline-block"></div>
+        <div id="productsContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5"></div>
+        <div id="noResults" class="hidden text-center py-12 md:py-16 text-gray-400 text-sm md:text-base">No products found. Try a different search.</div>
       </div>
     </div>
   </main>
 
-  <footer class="bg-white border-t border-gray-100 py-8 text-sm text-gray-500 mt-8">
+  <footer class="bg-white border-t border-gray-100 py-6 md:py-8 text-xs md:text-sm text-gray-500 mt-6 md:mt-8">
     <div class="max-w-7xl mx-auto px-4 text-center md:flex justify-between items-center">
       <p>© 2026 RafikiMart254 — Kenya's trusted online marketplace</p>
       <p class="mt-2 md:mt-0"><i class="fas fa-phone-alt mr-1"></i> +254 700 123456 • support@rafikimart.ke</p>
     </div>
   </footer>
 
-  <button id="backToTop" class="fixed bottom-6 right-6 bg-green-700 hover:bg-green-800 text-white rounded-full w-12 h-12 shadow-lg flex items-center justify-center opacity-0 invisible transition-all z-30"><i class="fas fa-arrow-up text-xl"></i></button>
+  <button id="backToTop" class="fixed bottom-5 right-5 md:bottom-6 md:right-6 bg-green-700 hover:bg-green-800 text-white rounded-full w-10 h-10 md:w-12 md:h-12 shadow-lg flex items-center justify-center opacity-0 invisible transition-all z-30"><i class="fas fa-arrow-up text-base md:text-xl"></i></button>
 
   <!-- CART DRAWER -->
   <div id="cartOverlay" class="fixed inset-0 modal-overlay z-40 hidden"></div>
@@ -192,21 +214,21 @@
   <div id="productDetailModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
       <button id="closeProductModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-20"><i class="fas fa-times text-xl"></i></button>
-      <div class="p-6 md:p-8">
-        <div class="flex flex-col md:flex-row gap-8">
-          <div class="md:w-1/2"><div class="relative bg-gray-100 rounded-2xl overflow-hidden"><div class="relative w-full aspect-square flex items-center justify-center bg-white"><div id="galleryImages" class="w-full h-full flex items-center justify-center"></div><button id="galleryPrev" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"><i class="fas fa-chevron-left"></i></button><button id="galleryNext" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"><i class="fas fa-chevron-right"></i></button></div><div id="galleryDots" class="flex justify-center gap-1.5 py-3 bg-white"></div></div></div>
+      <div class="p-5 md:p-8">
+        <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+          <div class="md:w-1/2"><div class="relative bg-gray-100 rounded-2xl overflow-hidden"><div class="relative w-full aspect-square flex items-center justify-center bg-white"><div id="galleryImages" class="w-full h-full flex items-center justify-center"></div><button id="galleryPrev" class="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"><i class="fas fa-chevron-left"></i></button><button id="galleryNext" class="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"><i class="fas fa-chevron-right"></i></button></div><div id="galleryDots" class="flex justify-center gap-1.5 py-3 bg-white"></div></div></div>
           <div class="md:w-1/2">
             <span id="detailCategory" class="inline-block bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full mb-2"></span>
-            <h2 id="detailName" class="text-3xl font-bold text-gray-800 mb-2"></h2>
+            <h2 id="detailName" class="text-2xl md:text-3xl font-bold text-gray-800 mb-2"></h2>
             <div class="flex items-center gap-2 mb-3"><div id="avgRatingStars" class="star-rating flex"></div><span id="avgRatingText" class="text-sm text-gray-600"></span></div>
             <p id="detailDescription" class="text-gray-600 text-sm mb-5 leading-relaxed"></p>
             <div class="mb-5"><h4 class="font-semibold text-gray-700 text-sm mb-2">Key Features</h4><ul id="detailFeatures" class="space-y-1 text-sm text-gray-600 list-disc list-inside"></ul></div>
-            <div class="flex items-center justify-between border-t pt-5"><span id="detailPrice" class="text-3xl font-bold text-green-700"></span><button id="detailAddToCartBtn" class="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-xl font-semibold shadow-md transition"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</button></div>
+            <div class="flex items-center justify-between border-t pt-5"><span id="detailPrice" class="text-2xl md:text-3xl font-bold text-green-700"></span><button id="detailAddToCartBtn" class="bg-green-700 hover:bg-green-800 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold shadow-md transition"><i class="fas fa-cart-plus mr-2"></i>Add to Cart</button></div>
           </div>
         </div>
-        <div class="mt-10 border-t pt-6" id="reviewsSection">
-          <h3 class="text-xl font-bold text-gray-800 mb-5">Customer Reviews</h3>
-          <div id="reviewFormContainer" class="bg-gray-50 p-5 rounded-xl mb-6 hidden">
+        <div class="mt-8 md:mt-10 border-t pt-6" id="reviewsSection">
+          <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-4 md:mb-5">Customer Reviews</h3>
+          <div id="reviewFormContainer" class="bg-gray-50 p-4 md:p-5 rounded-xl mb-6 hidden">
             <h4 class="font-medium mb-3">Leave a Review</h4>
             <div class="flex items-center gap-3 mb-3"><span class="text-sm">Rating:</span><div id="ratingInput" class="star-rating flex gap-1"></div><span id="selectedRatingText" class="text-sm text-gray-500">Select</span></div>
             <textarea id="reviewComment" rows="2" class="w-full border rounded-lg px-3 py-2 mb-3" placeholder="Tell us about your experience..."></textarea>
@@ -223,8 +245,8 @@
   <!-- MY ORDERS MODAL -->
   <div id="ordersModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-y-auto shadow-2xl">
-      <div class="p-6 border-b sticky top-0 bg-white flex justify-between items-center"><h3 class="text-xl font-bold"><i class="fas fa-box mr-2 text-green-700"></i>My Orders</h3><button id="closeOrdersModal" class="text-gray-500"><i class="fas fa-times text-xl"></i></button></div>
-      <div class="p-6"><div id="ordersList" class="space-y-5"></div></div>
+      <div class="p-5 md:p-6 border-b sticky top-0 bg-white flex justify-between items-center"><h3 class="text-lg md:text-xl font-bold"><i class="fas fa-box mr-2 text-green-700"></i>My Orders</h3><button id="closeOrdersModal" class="text-gray-500"><i class="fas fa-times text-xl"></i></button></div>
+      <div class="p-5 md:p-6"><div id="ordersList" class="space-y-5"></div></div>
     </div>
   </div>
 
@@ -235,7 +257,7 @@
     "use strict";
     // ---------- DATA ----------
     let products = [], reviews = [], orders = [], users = [], cart = [], currentUser = null;
-    let activeCategory = 'all', searchTerm = '';
+    let activeCategory = 'all', searchTerm = '', minPrice = null, maxPrice = null;
     let currentMedia = [], currentGalleryIndex = 0, currentDetailProductId = null, currentRating = 0;
     const defaultProducts = [ 
       { id: 1, name: "Tecno Spark 10C 128GB", price: 14500, category: "Electronics", media: [{type:'image', url:'https://placehold.co/400x400/e2e8f0/475156?text=📱+Tecno'}], badge: "Bestseller", description: "6.6” HD+ display, 5000mAh battery.", features: ["128GB storage", "50MP camera", "Fingerprint", "Android 13"] },
@@ -248,6 +270,8 @@
     const productsContainer = document.getElementById('productsContainer');
     const categoryTitle = document.getElementById('categoryTitle'), productCountSpan = document.getElementById('productCount');
     const searchInputs = [document.getElementById('desktopSearchInput'), document.getElementById('mobileSearchInput')];
+    const minPriceInputs = [document.getElementById('desktopMinPrice'), document.getElementById('mobileMinPrice')];
+    const maxPriceInputs = [document.getElementById('desktopMaxPrice'), document.getElementById('mobileMaxPrice')];
     const searchIndicator = document.getElementById('searchIndicator'), noResultsDiv = document.getElementById('noResults');
     const cartCountSpan = document.getElementById('cartCount'), cartItemsDiv = document.getElementById('cartItemsList'), cartTotalSpan = document.getElementById('cartTotalAmount');
     const checkoutBtn = document.getElementById('checkoutBtn'), clearCartBtn = document.getElementById('clearCartBtn');
@@ -300,6 +324,8 @@
         const term = searchTerm.toLowerCase();
         filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || p.description?.toLowerCase().includes(term));
       }
+      if (minPrice !== null && !isNaN(minPrice)) filtered = filtered.filter(p => p.price >= minPrice);
+      if (maxPrice !== null && !isNaN(maxPrice)) filtered = filtered.filter(p => p.price <= maxPrice);
       return filtered;
     }
 
@@ -307,16 +333,19 @@
       const filtered = getFilteredProducts();
       categoryTitle.textContent = activeCategory === 'all' ? 'All Products' : activeCategory;
       productCountSpan.textContent = `${filtered.length} item${filtered.length!==1?'s':''}`;
-      searchIndicator.classList.toggle('hidden', !searchTerm);
-      if (searchTerm) searchIndicator.innerHTML = `<i class="fas fa-search mr-1"></i> Results for "<strong>${searchTerm}</strong>" (${filtered.length})`;
+      searchIndicator.classList.toggle('hidden', !searchTerm && minPrice === null && maxPrice === null);
+      let indicatorText = '';
+      if (searchTerm) indicatorText += `Search: "${searchTerm}" `;
+      if (minPrice !== null || maxPrice !== null) indicatorText += `Price: ${minPrice || 'Any'} – ${maxPrice || 'Any'} KES`;
+      searchIndicator.innerHTML = indicatorText ? `<i class="fas fa-filter mr-1"></i> ${indicatorText} (${filtered.length})` : '';
       if (filtered.length === 0) { productsContainer.innerHTML = ''; noResultsDiv.classList.remove('hidden'); return; }
       noResultsDiv.classList.add('hidden');
       productsContainer.innerHTML = filtered.map(p => {
         const img = p.media?.[0]?.url || '';
-        return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover-scale product-card" data-id="${p.id}">
-          ${p.badge ? `<span class="absolute top-3 left-3 bg-green-600 text-white text-xs px-2.5 py-1 rounded-full z-10 shadow">${p.badge}</span>` : ''}
-          <div class="aspect-square w-full bg-gray-100 relative"><img src="${img}" class="w-full h-full object-cover" alt="${p.name}"><span class="absolute bottom-2 right-2 text-xs bg-white/90 px-2 py-0.5 rounded-full text-gray-700">${p.category}</span></div>
-          <div class="p-4"><h3 class="font-semibold text-gray-800">${p.name}</h3><div class="flex items-center justify-between mt-3"><span class="text-xl font-bold text-green-700">KES ${p.price.toLocaleString()}</span><div class="flex gap-1"><button data-id="${p.id}" class="quick-view-btn text-gray-500 hover:text-green-700 p-2"><i class="fas fa-eye"></i></button><button data-id="${p.id}" class="add-to-cart-btn bg-green-100 hover:bg-green-200 text-green-800 text-sm px-4 py-2 rounded-lg font-medium"><i class="fas fa-plus mr-1"></i>Add</button></div></div></div></div>`;
+        return `<div class="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover-scale product-card" data-id="${p.id}">
+          ${p.badge ? `<span class="absolute top-2 left-2 md:top-3 md:left-3 bg-green-600 text-white text-[10px] md:text-xs px-2 md:px-2.5 py-0.5 md:py-1 rounded-full z-10 shadow">${p.badge}</span>` : ''}
+          <div class="aspect-square w-full bg-gray-100 relative"><img src="${img}" class="w-full h-full object-cover" alt="${p.name}"><span class="absolute bottom-1.5 right-1.5 md:bottom-2 md:right-2 text-[10px] md:text-xs bg-white/90 px-1.5 md:px-2 py-0.5 rounded-full text-gray-700">${p.category}</span></div>
+          <div class="p-3 md:p-4"><h3 class="font-medium md:font-semibold text-gray-800 text-sm md:text-base">${p.name}</h3><div class="flex items-center justify-between mt-2 md:mt-3"><span class="text-lg md:text-xl font-bold text-green-700">KES ${p.price.toLocaleString()}</span><div class="flex gap-1"><button data-id="${p.id}" class="quick-view-btn text-gray-500 hover:text-green-700 p-1.5 md:p-2"><i class="fas fa-eye text-sm md:text-base"></i></button><button data-id="${p.id}" class="add-to-cart-btn bg-green-100 hover:bg-green-200 text-green-800 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-medium"><i class="fas fa-plus mr-1"></i>Add</button></div></div></div></div>`;
       }).join('');
       attachListeners();
     }
@@ -336,7 +365,7 @@
         if (url.includes('youtube')||url.includes('youtu.be')) { const vid = url.split('/').pop().split('?')[0]; galleryContainer.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${vid}" allowfullscreen></iframe>`; }
         else galleryContainer.innerHTML = `<video controls class="w-full h-full object-contain"><source src="${url}"></video>`;
       }
-      galleryDots.innerHTML = currentMedia.map((_,i)=>`<button class="w-2.5 h-2.5 rounded-full transition-all ${i===currentGalleryIndex?'bg-green-700 w-6':'bg-gray-300'}"></button>`).join('');
+      galleryDots.innerHTML = currentMedia.map((_,i)=>`<button class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all ${i===currentGalleryIndex?'bg-green-700 w-5 md:w-6':'bg-gray-300'}"></button>`).join('');
       galleryDots.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>{ currentGalleryIndex=i; updateGalleryDisplay(); }));
     }
     galleryPrev.onclick = ()=> { if(currentMedia.length>1) { currentGalleryIndex = (currentGalleryIndex-1+currentMedia.length)%currentMedia.length; updateGalleryDisplay(); }};
@@ -358,7 +387,7 @@
         else { reviewComment.disabled=false; ratingInput.style.pointerEvents='auto'; submitReviewBtn.disabled=false; reviewNotEligibleMsg.classList.add('hidden'); reviewSubmitMsg.classList.add('hidden'); }
       } else { reviewFormContainer.classList.add('hidden'); }
       currentRating = 0; selectedRatingText.textContent = 'Select';
-      ratingInput.innerHTML = Array(5).fill(0).map((_,i)=>`<i class="star far fa-star text-2xl cursor-pointer" data-rating="${i+1}"></i>`).join('');
+      ratingInput.innerHTML = Array(5).fill(0).map((_,i)=>`<i class="star far fa-star text-xl md:text-2xl cursor-pointer" data-rating="${i+1}"></i>`).join('');
       ratingInput.querySelectorAll('.star').forEach(s => {
         s.addEventListener('mouseenter', function(){ const r=parseInt(this.dataset.rating); ratingInput.querySelectorAll('.star').forEach((st,i)=>{ st.className = `star ${i<r?'fas':'far'} fa-star${i<r?' filled':''}`; }); });
         s.addEventListener('mouseleave', ()=> { ratingInput.querySelectorAll('.star').forEach((st,i)=>{ st.className = `star ${i<currentRating?'fas':'far'} fa-star${i<currentRating?' filled':''}`; }); });
@@ -382,9 +411,7 @@
       renderGallery(p.media || []);
       renderReviewsSection(id);
       productModal.classList.remove('hidden');
-      if (focusReview) {
-        setTimeout(() => reviewsSectionDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-      }
+      if (focusReview) setTimeout(() => reviewsSectionDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
     }
 
     function addToCart(id, name, price) { const existing = cart.find(i=>i.id===id); existing ? existing.quantity++ : cart.push({id,name,price,quantity:1}); saveCart(); updateCartUI(); }
@@ -413,9 +440,9 @@
       const total = cart.reduce((s,i)=>s+(i.price*i.quantity),0);
       message += `%0A*Total: KES ${total.toLocaleString()}*%0A`;
       message += `%0A📞 *Please provide your delivery details (Name, Phone, Address) when you send this message.*%0A`;
-      message += `%0A_Payment: Pay on Delivery (Lipa kwa Delivery)_`;
+      message += `%0A_Payment: Pay on Delivery_`;
       const phoneNumber = '254700123456'; // ⚠️ REPLACE WITH YOUR ACTUAL WHATSAPP NUMBER
-      const url = `https://wa.me/${+254708614269}?text=${message}`;
+      const url = `https://wa.me/${phoneNumber}?text=${message}`;
       window.open(url, '_blank');
     }
 
@@ -461,15 +488,10 @@
     }
 
     deliveryMethodSelect.addEventListener('change', updateCheckoutTotal);
-
     document.getElementById('deliveryForm').addEventListener('submit', e => {
       e.preventDefault();
       if (!currentUser) { alert('Please sign in to place an order.'); return; }
-      const details = {
-        fullName: document.getElementById('fullName').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value
-      };
+      const details = { fullName: document.getElementById('fullName').value, phone: document.getElementById('phone').value, address: document.getElementById('address').value };
       placeOrder(details);
     });
 
@@ -491,28 +513,14 @@
           </div>
         `).join('');
         return `<div class="border rounded-xl p-5 bg-gray-50">
-          <div class="flex justify-between items-start">
-            <div><span class="font-bold">Order #${order.id.toString().slice(-6)}</span><p class="text-xs text-gray-500">${new Date(order.date).toLocaleString()}</p></div>
-            <span class="px-3 py-1 rounded-full text-xs font-medium ${order.status==='Delivered'?'bg-green-100 text-green-700':order.status==='Shipped'?'bg-blue-100 text-blue-700':'bg-yellow-100 text-yellow-700'}">${order.status}</span>
-          </div>
+          <div class="flex justify-between items-start"><div><span class="font-bold">Order #${order.id.toString().slice(-6)}</span><p class="text-xs text-gray-500">${new Date(order.date).toLocaleString()}</p></div><span class="px-3 py-1 rounded-full text-xs font-medium ${order.status==='Delivered'?'bg-green-100 text-green-700':order.status==='Shipped'?'bg-blue-100 text-blue-700':'bg-yellow-100 text-yellow-700'}">${order.status}</span></div>
           <div class="mt-3 space-y-2">${itemsHtml}</div>
-          <div class="border-t mt-3 pt-3 text-sm">
-            <div class="flex justify-between"><span>Subtotal:</span><span>KES ${(order.subtotal || order.total - (order.deliveryFee || 0)).toLocaleString()}</span></div>
-            <div class="flex justify-between"><span>Delivery (${deliveryMethodText}):</span><span>KES ${(order.deliveryFee || 0).toLocaleString()}</span></div>
-            <div class="flex justify-between font-semibold mt-1"><span>Total:</span><span>KES ${order.total.toLocaleString()}</span></div>
-          </div>
+          <div class="border-t mt-3 pt-3 text-sm"><div class="flex justify-between"><span>Subtotal:</span><span>KES ${(order.subtotal || order.total - (order.deliveryFee || 0)).toLocaleString()}</span></div><div class="flex justify-between"><span>Delivery (${deliveryMethodText}):</span><span>KES ${(order.deliveryFee || 0).toLocaleString()}</span></div><div class="flex justify-between font-semibold mt-1"><span>Total:</span><span>KES ${order.total.toLocaleString()}</span></div></div>
           ${order.tracking ? `<p class="text-sm mt-2"><i class="fas fa-truck mr-1"></i> Tracking: ${order.tracking}</p>` : ''}
           <div class="mt-4 flex items-center justify-between"><div class="flex-1 flex items-center">${statusSteps.map((step,i)=>`<div class="flex-1 text-center"><div class="w-6 h-6 mx-auto rounded-full flex items-center justify-center text-xs ${i<=currentIdx?'bg-green-600 text-white':'bg-gray-300'}">${i+1}</div><span class="text-xs mt-1 block">${step}</span></div>`).join('')}</div></div>
         </div>`;
       }).join('');
-      document.querySelectorAll('.leave-review-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const productId = parseInt(btn.dataset.productId);
-          ordersModal.classList.add('hidden');
-          openProductDetail(productId, true);
-        });
-      });
+      document.querySelectorAll('.leave-review-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); const productId = parseInt(btn.dataset.productId); ordersModal.classList.add('hidden'); openProductDetail(productId, true); }));
     }
 
     function updateAuthUI() { if(currentUser) { accountLabel.textContent = `Hi, ${currentUser}`; loggedUserInfo.textContent = `Signed in as ${currentUser}`; } else { accountLabel.textContent = 'Account'; } }
@@ -538,7 +546,19 @@
     dots.forEach((d,i)=> d.onclick = ()=> { clearInterval(slideInterval); showSlide(i); slideInterval=setInterval(nextSlide,6000); });
     showSlide(0); slideInterval = setInterval(nextSlide, 6000);
 
-    searchInputs.forEach(inp => inp.addEventListener('input', e => { searchTerm = e.target.value; renderProducts(); }));
+    function syncInputs() {
+      const desktopSearch = document.getElementById('desktopSearchInput');
+      const mobileSearch = document.getElementById('mobileSearchInput');
+      const desktopMin = document.getElementById('desktopMinPrice');
+      const mobileMin = document.getElementById('mobileMinPrice');
+      const desktopMax = document.getElementById('desktopMaxPrice');
+      const mobileMax = document.getElementById('mobileMaxPrice');
+      searchInputs.forEach(inp => inp.addEventListener('input', e => { searchTerm = e.target.value; if (e.target === desktopSearch) mobileSearch.value = searchTerm; else desktopSearch.value = searchTerm; renderProducts(); }));
+      minPriceInputs.forEach(inp => inp.addEventListener('input', e => { minPrice = e.target.value ? parseFloat(e.target.value) : null; if (e.target === desktopMin) mobileMin.value = e.target.value; else desktopMin.value = e.target.value; renderProducts(); }));
+      maxPriceInputs.forEach(inp => inp.addEventListener('input', e => { maxPrice = e.target.value ? parseFloat(e.target.value) : null; if (e.target === desktopMax) mobileMax.value = e.target.value; else desktopMax.value = e.target.value; renderProducts(); }));
+    }
+    syncInputs();
+
     document.querySelectorAll('.category-filter-btn').forEach(b => b.addEventListener('click', function(){ document.querySelectorAll('.category-filter-btn').forEach(bt=>bt.classList.remove('category-active','bg-green-700','text-white')); this.classList.add('category-active','bg-green-700','text-white'); activeCategory = this.dataset.category; renderProducts(); }));
     window.addEventListener('scroll', ()=> backToTopBtn.classList.toggle('opacity-0', scrollY<=300));
     backToTopBtn.onclick = ()=> scrollTo({top:0,behavior:'smooth'});
