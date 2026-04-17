@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Admin Dashboard • SokoBazaar</title>
+  <title>Admin Dashboard • RafikiMart254</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -93,273 +93,318 @@
   <!-- Toast Message -->
   <div id="toast" class="toast opacity-0 pointer-events-none transition-opacity">✅ Product saved successfully</div>
 
-  <script>
-    (function(){
-      const STORAGE_KEY = 'bazaar_products';
-      const REVIEWS_KEY = 'bazaar_reviews';
-      const ORDERS_KEY = 'bazaar_orders';
-      let products = [], reviews = [], orders = [];
-      let nextId = 1, pendingImages = [], MAX_IMAGES = 10;
+  <script type="module">
+    // ---------- FIREBASE INITIALIZATION ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
-      // DOM Tabs
-      const productsSection = document.getElementById('productsSection');
-      const ordersSection = document.getElementById('ordersSection');
-      const reviewsSection = document.getElementById('reviewsSection');
-      const productsTabBtn = document.getElementById('productsTabBtn');
-      const ordersTabBtn = document.getElementById('ordersTabBtn');
-      const reviewsTabBtn = document.getElementById('reviewsTabBtn');
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-1DZU2If3YqgLSviHfL-kZTGjg3KL1Sw",
+      authDomain: "rafikimart254.firebaseapp.com",
+      databaseURL: "https://rafikimart254-default-rtdb.firebaseio.com",
+      projectId: "rafikimart254",
+      storageBucket: "rafikimart254.firebasestorage.app",
+      messagingSenderId: "815262120495",
+      appId: "1:815262120495:web:983eb08eb9ff8c6707a4da"
+    };
 
-      function setActiveTab(activeBtn) {
-        [productsTabBtn, ordersTabBtn, reviewsTabBtn].forEach(btn => {
-          btn.classList.remove('active', 'bg-green-700', 'text-white');
-          btn.classList.add('bg-gray-200', 'text-gray-700');
-        });
-        activeBtn.classList.add('active', 'bg-green-700', 'text-white');
-        activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
-      }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-      productsTabBtn.addEventListener('click', ()=>{
-        setActiveTab(productsTabBtn);
-        productsSection.classList.remove('hidden');
-        ordersSection.classList.add('hidden');
-        reviewsSection.classList.add('hidden');
+    // ---------- GLOBAL STATE ----------
+    let products = [];
+    let reviews = [];
+    let orders = [];
+    let nextId = 1;
+    let pendingImages = [];
+    const MAX_IMAGES = 10;
+
+    // DOM Tabs
+    const productsSection = document.getElementById('productsSection');
+    const ordersSection = document.getElementById('ordersSection');
+    const reviewsSection = document.getElementById('reviewsSection');
+    const productsTabBtn = document.getElementById('productsTabBtn');
+    const ordersTabBtn = document.getElementById('ordersTabBtn');
+    const reviewsTabBtn = document.getElementById('reviewsTabBtn');
+
+    function setActiveTab(activeBtn) {
+      [productsTabBtn, ordersTabBtn, reviewsTabBtn].forEach(btn => {
+        btn.classList.remove('active', 'bg-green-700', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-700');
       });
-      ordersTabBtn.addEventListener('click', ()=>{
-        setActiveTab(ordersTabBtn);
-        productsSection.classList.add('hidden');
-        ordersSection.classList.remove('hidden');
-        reviewsSection.classList.add('hidden');
-        loadOrdersFromStorage();
-        renderOrdersList();
-      });
-      reviewsTabBtn.addEventListener('click', ()=>{
-        setActiveTab(reviewsTabBtn);
-        productsSection.classList.add('hidden');
-        ordersSection.classList.add('hidden');
-        reviewsSection.classList.remove('hidden');
-        renderPendingReviews();
-      });
+      activeBtn.classList.add('active', 'bg-green-700', 'text-white');
+      activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+    }
 
-      // ---------- DATA LOADING ----------
-      function loadOrdersFromStorage() {
-        try {
-          const storedOrders = localStorage.getItem(ORDERS_KEY);
-          orders = storedOrders ? JSON.parse(storedOrders) : [];
-          // Ensure each order has required fields
-          orders = orders.map(o => ({
-            ...o,
-            items: o.items || [],
-            phone: o.phone || 'N/A',
-            address: o.address || 'N/A',
-            tracking: o.tracking || ''
-          }));
-        } catch (e) {
-          console.error('Failed to load orders', e);
-          orders = [];
-        }
-      }
+    productsTabBtn.addEventListener('click', () => {
+      setActiveTab(productsTabBtn);
+      productsSection.classList.remove('hidden');
+      ordersSection.classList.add('hidden');
+      reviewsSection.classList.add('hidden');
+    });
+    ordersTabBtn.addEventListener('click', () => {
+      setActiveTab(ordersTabBtn);
+      productsSection.classList.add('hidden');
+      ordersSection.classList.remove('hidden');
+      reviewsSection.classList.add('hidden');
+      renderOrdersList();
+    });
+    reviewsTabBtn.addEventListener('click', () => {
+      setActiveTab(reviewsTabBtn);
+      productsSection.classList.add('hidden');
+      ordersSection.classList.add('hidden');
+      reviewsSection.classList.remove('hidden');
+      renderPendingReviews();
+    });
 
-      function loadData() {
-        try {
-          const storedProd = localStorage.getItem(STORAGE_KEY);
-          products = storedProd ? JSON.parse(storedProd) : [
+    // ---------- FIREBASE DATA LOADING (Real-time) ----------
+    function loadProducts() {
+      const productsRef = ref(db, 'products');
+      onValue(productsRef, (snapshot) => {
+        const data = snapshot.val();
+        products = data ? Object.values(data) : [];
+        if (products.length === 0) {
+          // Initialize with default products
+          const defaultProducts = [
             { id: 1, name: "Tecno Spark 10C", price: 14500, category: "Electronics", media: [{type:'image', url:'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect width=\'200\' height=\'200\' fill=\'%23e2e8f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'80\'%3E📱%3C/text%3E%3C/svg%3E'}], badge:"Bestseller", description:"6.6” HD+", features:["128GB","50MP"]},
             { id: 2, name: "Oraimo Earphones", price: 1850, category: "Electronics", media: [{type:'image', url:'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect width=\'200\' height=\'200\' fill=\'%23e2e8f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'80\'%3E🎧%3C/text%3E%3C/svg%3E'}], badge:"Fast moving", description:"24h playtime", features:["Bluetooth 5.3"]}
           ];
-          if (!storedProd) localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-          
-          const storedReviews = localStorage.getItem(REVIEWS_KEY);
-          reviews = storedReviews ? JSON.parse(storedReviews) : [];
-          
-          loadOrdersFromStorage();
-          
-          nextId = Math.max(...products.map(p=>p.id), 0) + 1;
-          renderProductTable();
-        } catch (e) {
-          console.error('Failed to load data', e);
+          const updates = {};
+          defaultProducts.forEach(p => { updates[p.id] = p; });
+          set(ref(db, 'products'), updates);
+          products = defaultProducts;
         }
-      }
-      
-      function saveProducts() { localStorage.setItem(STORAGE_KEY, JSON.stringify(products)); renderProductTable(); }
-      function saveReviews() { localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews)); }
-      function saveOrders() { localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); }
-
-      // ---------- REAL-TIME ORDER SYNC ----------
-      window.addEventListener('storage', (e) => {
-        if (e.key === ORDERS_KEY) {
-          loadOrdersFromStorage();
-          if (!ordersSection.classList.contains('hidden')) {
-            renderOrdersList();
-          }
-        }
+        nextId = Math.max(...products.map(p => p.id), 0) + 1;
+        renderProductTable();
       });
+    }
 
-      function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg || '✅ Product saved successfully';
-        toast.classList.remove('opacity-0', 'pointer-events-none');
-        setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2000);
-      }
-
-      document.getElementById('refreshOrdersBtn').addEventListener('click', ()=>{
-        loadOrdersFromStorage();
-        renderOrdersList();
-        showToast('🔄 Orders refreshed');
+    function loadReviews() {
+      const reviewsRef = ref(db, 'reviews');
+      onValue(reviewsRef, (snapshot) => {
+        const data = snapshot.val();
+        reviews = data ? Object.values(data) : [];
       });
+    }
 
-      // ---------- PRODUCT TABLE ----------
-      function renderProductTable() {
-        const tbody = document.getElementById('productTableBody');
-        tbody.innerHTML = products.map(p => {
-          const first = p.media?.[0];
-          const preview = first?.type==='image'?`<img src="${first.url}" class="w-10 h-10 object-cover rounded">`:'<i class="fas fa-video text-xl"></i>';
-          return `<tr class="border-b hover:bg-gray-50"><td class="py-3 px-4">${preview}</td><td class="py-3 px-4">${p.name}</td><td class="py-3 px-4">${p.category}</td><td class="py-3 px-4">KES ${p.price.toLocaleString()}</td><td class="py-3 px-4"><button data-id="${p.id}" class="edit-btn text-blue-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${p.id}" class="delete-btn text-red-600"><i class="fas fa-trash"></i></button></td></tr>`;
-        }).join('');
-        document.querySelectorAll('.edit-btn').forEach(b=>b.addEventListener('click',()=>editProduct(parseInt(b.dataset.id))));
-        document.querySelectorAll('.delete-btn').forEach(b=>b.addEventListener('click',()=>{ if(confirm('Delete this product?')){ products=products.filter(p=>p.id!==parseInt(b.dataset.id)); saveProducts(); }}));
-      }
+    function loadOrders() {
+      const ordersRef = ref(db, 'orders');
+      onValue(ordersRef, (snapshot) => {
+        const data = snapshot.val();
+        orders = data ? Object.values(data) : [];
+      });
+    }
 
-      // ---------- ORDERS LIST ----------
-      function renderOrdersList() {
-        const container = document.getElementById('ordersListContainer');
-        if (!orders.length) {
-          container.innerHTML = '<p class="text-gray-400 text-center py-8 bg-white rounded-xl">No orders yet.</p>';
-          return;
+    // Save functions
+    function saveProducts() {
+      const updates = {};
+      products.forEach(p => { updates[p.id] = p; });
+      set(ref(db, 'products'), updates);
+    }
+
+    function saveReviews() {
+      const updates = {};
+      reviews.forEach(r => { updates[r.id] = r; });
+      set(ref(db, 'reviews'), updates);
+    }
+
+    function saveOrders() {
+      const updates = {};
+      orders.forEach(o => { updates[o.id] = o; });
+      set(ref(db, 'orders'), updates);
+    }
+
+    function deleteProduct(productId) {
+      remove(ref(db, `products/${productId}`));
+    }
+
+    // Initialize data
+    loadProducts();
+    loadReviews();
+    loadOrders();
+
+    // Toast notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg || '✅ Product saved successfully';
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2000);
+    }
+
+    // Refresh orders button
+    document.getElementById('refreshOrdersBtn').addEventListener('click', () => {
+      renderOrdersList();
+      showToast('🔄 Orders refreshed');
+    });
+
+    // ---------- PRODUCT TABLE ----------
+    function renderProductTable() {
+      const tbody = document.getElementById('productTableBody');
+      tbody.innerHTML = products.map(p => {
+        const first = p.media?.[0];
+        const preview = first?.type === 'image' ? `<img src="${first.url}" class="w-10 h-10 object-cover rounded">` : '<i class="fas fa-video text-xl"></i>';
+        return `<tr class="border-b hover:bg-gray-50"><td class="py-3 px-4">${preview}</td><td class="py-3 px-4">${p.name}</td><td class="py-3 px-4">${p.category}</td><td class="py-3 px-4">KES ${p.price.toLocaleString()}</td><td class="py-3 px-4"><button data-id="${p.id}" class="edit-btn text-blue-600 mr-2"><i class="fas fa-edit"></i></button><button data-id="${p.id}" class="delete-btn text-red-600"><i class="fas fa-trash"></i></button></td></tr>`;
+      }).join('');
+      document.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', () => editProduct(parseInt(b.dataset.id))));
+      document.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', () => {
+        if (confirm('Delete this product?')) {
+          deleteProduct(parseInt(b.dataset.id));
+          showToast('✅ Product deleted');
         }
-        container.innerHTML = orders.sort((a,b)=> new Date(b.date) - new Date(a.date)).map(order => {
-          const statusOptions = ['Processing', 'Shipped', 'Delivered'];
-          return `
-            <div class="bg-white p-4 md:p-5 rounded-xl shadow border">
-              <div class="flex flex-col sm:flex-row justify-between items-start gap-2">
-                <div><span class="font-bold">Order #${order.id.toString().slice(-8)}</span><p class="text-xs text-gray-500">${order.userId} • ${new Date(order.date).toLocaleString()}</p></div>
-                <select data-order-id="${order.id}" class="status-select border rounded-lg px-3 py-1 text-sm w-full sm:w-auto">${statusOptions.map(s => `<option value="${s}" ${order.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select>
-              </div>
-              <div class="mt-3 space-y-1 text-sm">${order.items.map(i => `<div class="flex justify-between"><span>${i.name} x${i.quantity}</span><span>KES ${(i.price*i.quantity).toLocaleString()}</span></div>`).join('')}</div>
-              <div class="border-t mt-3 pt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <span class="font-semibold">Total: KES ${order.total.toLocaleString()}</span>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                  <input type="text" data-order-id="${order.id}" class="tracking-input border rounded px-3 py-1 text-sm flex-1 sm:w-40" placeholder="Tracking #" value="${order.tracking || ''}">
-                  <button data-order-id="${order.id}" class="save-tracking-btn bg-green-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap">Save</button>
-                </div>
-              </div>
-              <p class="text-xs text-gray-400 mt-2">📞 ${order.phone} • 📍 ${order.address}</p>
+      }));
+    }
+
+    // ---------- ORDERS LIST ----------
+    function renderOrdersList() {
+      const container = document.getElementById('ordersListContainer');
+      if (!orders.length) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-8 bg-white rounded-xl">No orders yet.</p>';
+        return;
+      }
+      container.innerHTML = orders.sort((a, b) => new Date(b.date) - new Date(a.date)).map(order => {
+        const statusOptions = ['Processing', 'Shipped', 'Delivered'];
+        return `
+          <div class="bg-white p-4 md:p-5 rounded-xl shadow border">
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-2">
+              <div><span class="font-bold">Order #${order.id.toString().slice(-8)}</span><p class="text-xs text-gray-500">${order.userId} • ${new Date(order.date).toLocaleString()}</p></div>
+              <select data-order-id="${order.id}" class="status-select border rounded-lg px-3 py-1 text-sm w-full sm:w-auto">${statusOptions.map(s => `<option value="${s}" ${order.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select>
             </div>
-          `;
-        }).join('');
-        document.querySelectorAll('.status-select').forEach(sel => sel.addEventListener('change', (e) => {
-          const orderId = parseFloat(sel.dataset.orderId);
-          const order = orders.find(o => o.id === orderId);
-          if (order) { order.status = sel.value; saveOrders(); showToast(`Order status updated to ${sel.value}`); }
-        }));
-        document.querySelectorAll('.save-tracking-btn').forEach(btn => btn.addEventListener('click', () => {
-          const orderId = parseFloat(btn.dataset.orderId);
-          const input = document.querySelector(`.tracking-input[data-order-id="${orderId}"]`);
-          const order = orders.find(o => o.id === orderId);
-          if (order && input) { order.tracking = input.value; saveOrders(); showToast('Tracking number saved'); }
-        }));
-      }
+            <div class="mt-3 space-y-1 text-sm">${order.items.map(i => `<div class="flex justify-between"><span>${i.name} x${i.quantity}</span><span>KES ${(i.price * i.quantity).toLocaleString()}</span></div>`).join('')}</div>
+            <div class="border-t mt-3 pt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <span class="font-semibold">Total: KES ${order.total.toLocaleString()}</span>
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <input type="text" data-order-id="${order.id}" class="tracking-input border rounded px-3 py-1 text-sm flex-1 sm:w-40" placeholder="Tracking #" value="${order.tracking || ''}">
+                <button data-order-id="${order.id}" class="save-tracking-btn bg-green-600 text-white px-3 py-1 rounded text-sm whitespace-nowrap">Save</button>
+              </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2">📞 ${order.phone || 'N/A'} • 📍 ${order.address || 'N/A'}</p>
+          </div>
+        `;
+      }).join('');
+      document.querySelectorAll('.status-select').forEach(sel => sel.addEventListener('change', (e) => {
+        const orderId = parseFloat(sel.dataset.orderId);
+        const order = orders.find(o => o.id === orderId);
+        if (order) { order.status = sel.value; saveOrders(); showToast(`Order status updated to ${sel.value}`); }
+      }));
+      document.querySelectorAll('.save-tracking-btn').forEach(btn => btn.addEventListener('click', () => {
+        const orderId = parseFloat(btn.dataset.orderId);
+        const input = document.querySelector(`.tracking-input[data-order-id="${orderId}"]`);
+        const order = orders.find(o => o.id === orderId);
+        if (order && input) { order.tracking = input.value; saveOrders(); showToast('Tracking number saved'); }
+      }));
+    }
 
-      // ---------- REVIEWS ----------
-      function renderPendingReviews() {
-        const container = document.getElementById('pendingReviewsContainer');
-        const pending = reviews.filter(r=>r.status==='pending');
-        if (!pending.length) { container.innerHTML = '<p class="text-gray-400 text-center py-6">No pending reviews.</p>'; return; }
-        container.innerHTML = pending.map(r => {
-          const product = products.find(p=>p.id===r.productId) || { name: 'Unknown Product' };
-          return `<div class="bg-white p-4 rounded-lg shadow border"><div class="flex flex-col sm:flex-row justify-between gap-2"><div><span class="font-medium">${r.userId}</span> on <span class="font-semibold">${product.name}</span></div><div class="star-rating text-yellow-500">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div></div><p class="text-sm my-2">${r.comment}</p><div class="flex gap-2"><button data-id="${r.id}" class="approve-btn bg-green-600 text-white px-3 py-1 rounded text-sm">Approve</button><button data-id="${r.id}" class="reject-btn bg-red-500 text-white px-3 py-1 rounded text-sm">Reject</button></div></div>`;
-        }).join('');
-        document.querySelectorAll('.approve-btn').forEach(b=>b.addEventListener('click',()=>{ const id=parseFloat(b.dataset.id); const rev=reviews.find(r=>r.id===id); if(rev) rev.status='approved'; saveReviews(); renderPendingReviews(); showToast('Review approved'); }));
-        document.querySelectorAll('.reject-btn').forEach(b=>b.addEventListener('click',()=>{ const id=parseFloat(b.dataset.id); reviews=reviews.filter(r=>r.id!==id); saveReviews(); renderPendingReviews(); showToast('Review rejected'); }));
-      }
+    // ---------- REVIEWS ----------
+    function renderPendingReviews() {
+      const container = document.getElementById('pendingReviewsContainer');
+      const pending = reviews.filter(r => r.status === 'pending');
+      if (!pending.length) { container.innerHTML = '<p class="text-gray-400 text-center py-6">No pending reviews.</p>'; return; }
+      container.innerHTML = pending.map(r => {
+        const product = products.find(p => p.id === r.productId) || { name: 'Unknown Product' };
+        return `<div class="bg-white p-4 rounded-lg shadow border"><div class="flex flex-col sm:flex-row justify-between gap-2"><div><span class="font-medium">${r.userId}</span> on <span class="font-semibold">${product.name}</span></div><div class="star-rating text-yellow-500">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div></div><p class="text-sm my-2">${r.comment}</p><div class="flex gap-2"><button data-id="${r.id}" class="approve-btn bg-green-600 text-white px-3 py-1 rounded text-sm">Approve</button><button data-id="${r.id}" class="reject-btn bg-red-500 text-white px-3 py-1 rounded text-sm">Reject</button></div></div>`;
+      }).join('');
+      document.querySelectorAll('.approve-btn').forEach(b => b.addEventListener('click', () => {
+        const id = parseFloat(b.dataset.id);
+        const rev = reviews.find(r => r.id === id);
+        if (rev) { rev.status = 'approved'; saveReviews(); renderPendingReviews(); showToast('Review approved'); }
+      }));
+      document.querySelectorAll('.reject-btn').forEach(b => b.addEventListener('click', () => {
+        const id = parseFloat(b.dataset.id);
+        reviews = reviews.filter(r => r.id !== id);
+        saveReviews();
+        renderPendingReviews();
+        showToast('Review rejected');
+      }));
+    }
 
-      // ---------- PRODUCT FORM ----------
-      const formCard = document.getElementById('productFormCard'), form = document.getElementById('productForm');
-      const productId = document.getElementById('productId'), nameInp = document.getElementById('productName'), catInp = document.getElementById('productCategory');
-      const priceInp = document.getElementById('productPrice'), badgeInp = document.getElementById('productBadge'), descInp = document.getElementById('productDesc');
-      const featInp = document.getElementById('productFeatures'), imageUpload = document.getElementById('imageUpload'), videoUrls = document.getElementById('videoUrls');
-      const imagePreview = document.getElementById('imagePreview'), imageCountDisplay = document.getElementById('imageCountDisplay'), imageError = document.getElementById('imageError');
+    // ---------- PRODUCT FORM ----------
+    const formCard = document.getElementById('productFormCard'), form = document.getElementById('productForm');
+    const productId = document.getElementById('productId'), nameInp = document.getElementById('productName'), catInp = document.getElementById('productCategory');
+    const priceInp = document.getElementById('productPrice'), badgeInp = document.getElementById('productBadge'), descInp = document.getElementById('productDesc');
+    const featInp = document.getElementById('productFeatures'), imageUpload = document.getElementById('imageUpload'), videoUrls = document.getElementById('videoUrls');
+    const imagePreview = document.getElementById('imagePreview'), imageCountDisplay = document.getElementById('imageCountDisplay'), imageError = document.getElementById('imageError');
 
-      function updateImagePreview(images) {
-        imagePreview.innerHTML = ''; 
-        images.forEach((img,i)=>{ 
-          const div=document.createElement('div'); div.className='relative group'; 
-          const im=document.createElement('img'); im.src=img.url; im.className='w-16 h-16 md:w-20 md:h-20 object-cover rounded border'; 
-          const rm=document.createElement('button'); rm.type='button'; rm.className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100'; 
-          rm.innerHTML='×'; rm.addEventListener('click',()=>{ pendingImages.splice(i,1); updateImagePreview(pendingImages); }); 
-          div.appendChild(im); div.appendChild(rm); imagePreview.appendChild(div); 
-        });
-        imageCountDisplay.textContent = `${pendingImages.length} / ${MAX_IMAGES} images`;
-      }
-
-      imageUpload.addEventListener('change', async (e)=>{
-        const files = Array.from(e.target.files); imageError.classList.add('hidden');
-        if(pendingImages.length+files.length>MAX_IMAGES){ imageError.textContent=`Max ${MAX_IMAGES} images.`; imageError.classList.remove('hidden'); return; }
-        for(let f of files){ if(pendingImages.length>=MAX_IMAGES) break; const url = await new Promise(r=>{ const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); }); pendingImages.push({type:'image', url}); }
-        updateImagePreview(pendingImages); imageUpload.value='';
+    function updateImagePreview(images) {
+      imagePreview.innerHTML = '';
+      images.forEach((img, i) => {
+        const div = document.createElement('div'); div.className = 'relative group';
+        const im = document.createElement('img'); im.src = img.url; im.className = 'w-16 h-16 md:w-20 md:h-20 object-cover rounded border';
+        const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100';
+        rm.innerHTML = '×'; rm.addEventListener('click', () => { pendingImages.splice(i, 1); updateImagePreview(pendingImages); });
+        div.appendChild(im); div.appendChild(rm); imagePreview.appendChild(div);
       });
+      imageCountDisplay.textContent = `${pendingImages.length} / ${MAX_IMAGES} images`;
+    }
 
-      document.getElementById('openAddForm').addEventListener('click',()=>{ 
-        form.reset(); 
-        productId.value = ''; 
-        pendingImages = []; 
-        updateImagePreview(pendingImages); 
-        document.getElementById('formTitle').textContent = '➕ Add New Product'; 
-        formCard.classList.remove('hidden'); 
-      });
-
-      document.getElementById('cancelForm').addEventListener('click',()=>formCard.classList.add('hidden'));
-
-      function editProduct(id){ 
-        const p = products.find(p=>p.id===id); 
-        if(!p) return; 
-        productId.value = p.id; 
-        nameInp.value = p.name; 
-        catInp.value = p.category; 
-        priceInp.value = p.price; 
-        badgeInp.value = p.badge || ''; 
-        descInp.value = p.description; 
-        featInp.value = p.features.join(', '); 
-        const imgs = p.media.filter(m=>m.type==='image'); 
-        pendingImages = [...imgs]; 
-        updateImagePreview(pendingImages); 
-        videoUrls.value = p.media.filter(m=>m.type==='video').map(v=>v.url).join(', '); 
-        document.getElementById('formTitle').textContent = '✏️ Edit Product'; 
-        formCard.classList.remove('hidden'); 
+    imageUpload.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files); imageError.classList.add('hidden');
+      if (pendingImages.length + files.length > MAX_IMAGES) { imageError.textContent = `Max ${MAX_IMAGES} images.`; imageError.classList.remove('hidden'); return; }
+      for (let f of files) {
+        if (pendingImages.length >= MAX_IMAGES) break;
+        const url = await new Promise(r => { const rd = new FileReader(); rd.onload = e => r(e.target.result); rd.readAsDataURL(f); });
+        pendingImages.push({ type: 'image', url });
       }
+      updateImagePreview(pendingImages); imageUpload.value = '';
+    });
 
-      form.addEventListener('submit', async (e)=>{
-        e.preventDefault(); 
-        if(!pendingImages.length){ alert('At least one image required'); return; }
-        const id = productId.value ? parseInt(productId.value) : nextId++;
-        const product = { 
-          id, 
-          name: nameInp.value.trim(), 
-          category: catInp.value, 
-          price: parseFloat(priceInp.value), 
-          badge: badgeInp.value.trim(), 
-          description: descInp.value.trim(), 
-          features: featInp.value.split(',').map(s=>s.trim()).filter(s=>s), 
-          media: [...pendingImages] 
-        };
-        const vids = videoUrls.value.trim(); 
-        if(vids) vids.split(',').forEach(url=> product.media.push({type:'video', url: url.trim()}));
-        
-        if(productId.value) { 
-          const idx = products.findIndex(p=>p.id===id); 
-          if(idx!==-1) products[idx] = product; 
-        } else { 
-          products.push(product); 
-        }
-        saveProducts(); 
-        formCard.classList.add('hidden'); 
-        pendingImages = []; 
-        updateImagePreview(pendingImages);
-        showToast(productId.value ? '✅ Product updated successfully' : '✅ Product added successfully');
-      });
+    document.getElementById('openAddForm').addEventListener('click', () => {
+      form.reset();
+      productId.value = '';
+      pendingImages = [];
+      updateImagePreview(pendingImages);
+      document.getElementById('formTitle').textContent = '➕ Add New Product';
+      formCard.classList.remove('hidden');
+    });
 
-      // Initialize
-      loadData();
-    })();
+    document.getElementById('cancelForm').addEventListener('click', () => formCard.classList.add('hidden'));
+
+    function editProduct(id) {
+      const p = products.find(p => p.id === id);
+      if (!p) return;
+      productId.value = p.id;
+      nameInp.value = p.name;
+      catInp.value = p.category;
+      priceInp.value = p.price;
+      badgeInp.value = p.badge || '';
+      descInp.value = p.description;
+      featInp.value = p.features.join(', ');
+      const imgs = p.media.filter(m => m.type === 'image');
+      pendingImages = [...imgs];
+      updateImagePreview(pendingImages);
+      videoUrls.value = p.media.filter(m => m.type === 'video').map(v => v.url).join(', ');
+      document.getElementById('formTitle').textContent = '✏️ Edit Product';
+      formCard.classList.remove('hidden');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!pendingImages.length) { alert('At least one image required'); return; }
+      const id = productId.value ? parseInt(productId.value) : nextId++;
+      const product = {
+        id,
+        name: nameInp.value.trim(),
+        category: catInp.value,
+        price: parseFloat(priceInp.value),
+        badge: badgeInp.value.trim(),
+        description: descInp.value.trim(),
+        features: featInp.value.split(',').map(s => s.trim()).filter(s => s),
+        media: [...pendingImages]
+      };
+      const vids = videoUrls.value.trim();
+      if (vids) vids.split(',').forEach(url => product.media.push({ type: 'video', url: url.trim() }));
+
+      if (productId.value) {
+        const idx = products.findIndex(p => p.id === id);
+        if (idx !== -1) products[idx] = product;
+      } else {
+        products.push(product);
+      }
+      saveProducts();
+      formCard.classList.add('hidden');
+      pendingImages = [];
+      updateImagePreview(pendingImages);
+      showToast(productId.value ? '✅ Product updated successfully' : '✅ Product added successfully');
+    });
   </script>
 </body>
 </html>
