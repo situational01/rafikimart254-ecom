@@ -23,7 +23,6 @@
     .category-scroll::-webkit-scrollbar { display: none; }
     .hero-slide-bg { background-size: cover; background-position: center; background-repeat: no-repeat; }
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    /* Square image container – works in all browsers */
     .img-square { position: relative; width: 100%; padding-bottom: 100%; background-color: #f3f4f6; }
     .img-square img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
   </style>
@@ -177,9 +176,9 @@
         <div class="mb-4">
           <label class="block text-sm font-medium mb-2">Delivery Method *</label>
           <select id="deliveryMethod" class="w-full border rounded-lg px-3 py-2 text-sm">
-            <option value="pickup" data-fee="50">Pickup in Nairobi CBD - KES 50</option>
-            <option value="nairobi" data-fee="170">Delivery within Nairobi - KES 170</option>
-            <option value="outside" data-fee="300">Delivery outside Nairobi - KES 300</option>
+            <option value="pickup" data-fee="50">📍 Pickup in Nairobi CBD - KES 50</option>
+            <option value="nairobi" data-fee="170">🚚 Delivery within Nairobi - KES 170</option>
+            <option value="outside" data-fee="300">✈️ Delivery outside Nairobi - KES 300</option>
           </select>
         </div>
         <div class="flex justify-between font-bold text-lg mb-4">
@@ -259,6 +258,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  console.log('✅ Firebase initialized');
 
   // ---------- GLOBAL STATE ----------
   let products = [];
@@ -312,11 +312,11 @@
       if (products.length === 0) {
         const updates = {};
         defaultProducts.forEach(p => { updates[p.id] = p; });
-        set(ref(db, 'products'), updates);
+        set(ref(db, 'products'), updates).then(() => console.log('✅ Default products saved'));
         products = defaultProducts;
       }
       renderProducts();
-    });
+    }, (error) => console.error('❌ Products read error:', error));
   }
 
   function loadReviews() {
@@ -349,7 +349,9 @@
   function saveOrders() {
     const updates = {};
     orders.forEach(o => { updates[o.id] = o; });
-    set(ref(db, 'orders'), updates);
+    set(ref(db, 'orders'), updates)
+      .then(() => console.log('✅ Orders saved to Firebase'))
+      .catch(err => console.error('❌ Failed to save orders:', err));
   }
 
   function saveUsers() {
@@ -518,14 +520,23 @@
   }
 
   function placeOrder(deliveryDetails) {
-    const deliveryFee = parseInt(deliveryMethodSelect.selectedOptions[0].dataset.fee);
+    console.log('📦 Placing order...', deliveryDetails);
+    
+    const selectedOption = deliveryMethodSelect.selectedOptions[0];
+    if (!selectedOption) {
+      alert('Please select a delivery method.');
+      return;
+    }
+    
+    const deliveryFee = parseInt(selectedOption.dataset.fee);
     const deliveryMethod = deliveryMethodSelect.value;
-    const subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0);
+    const subtotal = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
     const total = subtotal + deliveryFee;
+    
     const order = {
       id: Date.now() + Math.random(),
       userId: currentUser,
-      items: cart.map(i => ({...i})),
+      items: cart.map(i => ({ ...i })),
       subtotal: subtotal,
       deliveryFee: deliveryFee,
       deliveryMethod: deliveryMethod,
@@ -535,33 +546,70 @@
       date: new Date().toISOString(),
       ...deliveryDetails
     };
-    orders.push(order); saveOrders();
-    clearCart(); closeCart();
+    
+    console.log('📦 Order object:', order);
+    
+    orders.push(order);
+    saveOrders();
+    
+    clearCart();
+    closeCart();
+    checkoutModal.classList.add('hidden');
     document.getElementById('orderSuccessMsg').classList.remove('hidden');
-    setTimeout(() => { checkoutModal.classList.add('hidden'); }, 2500);
+    setTimeout(() => {
+      document.getElementById('orderSuccessMsg').classList.add('hidden');
+    }, 2500);
   }
 
   function updateCheckoutTotal() {
-    const subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0);
-    const fee = parseInt(deliveryMethodSelect.selectedOptions[0].dataset.fee);
+    const subtotal = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
+    const selectedOption = deliveryMethodSelect.selectedOptions[0];
+    const fee = parseInt(selectedOption.dataset.fee);
     const total = subtotal + fee;
     checkoutTotalSpan.textContent = `KES ${total.toLocaleString()}`;
   }
 
   function openCheckoutModal() {
     if (!cart.length) return;
-    document.getElementById('checkoutItems').innerHTML = cart.map(i => `<div class="flex justify-between"><span>${i.name} x${i.quantity}</span><span>KES ${(i.price*i.quantity).toLocaleString()}</span></div>`).join('');
+    document.getElementById('checkoutItems').innerHTML = cart.map(i => 
+      `<div class="flex justify-between"><span>${i.name} x${i.quantity}</span><span>KES ${(i.price*i.quantity).toLocaleString()}</span></div>`
+    ).join('');
     updateCheckoutTotal();
     checkoutModal.classList.remove('hidden');
     closeCart();
   }
 
   deliveryMethodSelect.addEventListener('change', updateCheckoutTotal);
+  
   document.getElementById('deliveryForm').addEventListener('submit', e => {
     e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    
     if (!currentUser) { alert('Please sign in to place an order.'); return; }
-    const details = { fullName: document.getElementById('fullName').value, phone: document.getElementById('phone').value, address: document.getElementById('address').value };
-    placeOrder(details);
+    
+    const fullName = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    
+    if (!fullName || !phone || !address) {
+      alert('Please fill in all delivery details.');
+      return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+    
+    const details = { fullName, phone, address };
+    
+    try {
+      placeOrder(details);
+    } catch (error) {
+      console.error('❌ Order placement error:', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Confirm Order';
+    }
   });
 
   function renderOrdersModal() {
@@ -642,6 +690,7 @@
   renderProducts();
   updateCartUI();
   updateAuthUI();
+  console.log('🚀 RafikiMart254 ready');
 </script>
 </body>
 </html>
