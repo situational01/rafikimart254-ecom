@@ -13,9 +13,8 @@
     .cart-drawer { transition: transform 0.3s ease; }
     .kenyan-flag-stripe { height: 4px; background: linear-gradient(90deg, #000 0%, #000 33%, #fff 33%, #fff 66%, #006600 66%, #006600 100%); }
     .category-active { background: #065f46 !important; color: white !important; }
-    .hover-scale { transition: all 0.2s; }
-    .hover-scale:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-    .product-card { cursor: pointer; }
+    .product-card { transition: all 0.2s ease; cursor: pointer; }
+    .product-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.02); }
     .carousel-slide { transition: opacity 0.6s ease-in-out; }
     .dot-active { background: #065f46 !important; width: 24px !important; border-radius: 9999px; }
     .star { color: #d1d5db; font-size: 1.2rem; }
@@ -23,6 +22,10 @@
     .category-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .category-scroll::-webkit-scrollbar { display: none; }
     .hero-slide-bg { background-size: cover; background-position: center; background-repeat: no-repeat; }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    /* Square image container – works in all browsers */
+    .img-square { position: relative; width: 100%; padding-bottom: 100%; background-color: #f3f4f6; }
+    .img-square img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
   </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -392,22 +395,28 @@
     if (searchTerm) searchIndicator.innerHTML = `<i class="fas fa-search mr-1"></i> Results for "<strong>${searchTerm}</strong>" (${filtered.length})`;
     if (filtered.length === 0) { productsContainer.innerHTML = ''; noResultsDiv.classList.remove('hidden'); return; }
     noResultsDiv.classList.add('hidden');
+    
     productsContainer.innerHTML = filtered.map(p => {
       const img = p.media?.[0]?.url || '';
-      return `<div class="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover-scale product-card" data-id="${p.id}">
-        ${p.badge ? `<span class="absolute top-2 left-2 md:top-3 md:left-3 bg-green-600 text-white text-[10px] md:text-xs px-2 md:px-2.5 py-0.5 md:py-1 rounded-full z-10 shadow">${p.badge}</span>` : ''}
-        <div class="aspect-square w-full bg-gray-100 relative"><img src="${img}" class="w-full h-full object-cover" alt="${p.name}"><span class="absolute bottom-1.5 right-1.5 md:bottom-2 md:right-2 text-[10px] md:text-xs bg-white/90 px-1.5 md:px-2 py-0.5 rounded-full text-gray-700">${p.category}</span></div>
-        <div class="p-3 md:p-4 flex-1 flex flex-col">
-          <h3 class="font-medium md:font-semibold text-gray-800 text-sm md:text-base line-clamp-2">${p.name}</h3>
-          <div class="flex items-center justify-between mt-auto pt-2 md:pt-3">
-            <span class="text-lg md:text-xl font-bold text-green-700">KES ${p.price.toLocaleString()}</span>
-            <div class="flex gap-1">
-              <button data-id="${p.id}" class="quick-view-btn text-gray-500 hover:text-green-700 p-1.5 md:p-2"><i class="fas fa-eye text-sm md:text-base"></i></button>
-              <button data-id="${p.id}" class="add-to-cart-btn bg-green-100 hover:bg-green-200 text-green-800 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-medium"><i class="fas fa-plus mr-1"></i>Add</button>
+      return `
+        <div class="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full product-card" data-id="${p.id}">
+          ${p.badge ? `<span class="absolute top-2 left-2 md:top-3 md:left-3 bg-green-600 text-white text-[10px] md:text-xs px-2 md:px-2.5 py-0.5 md:py-1 rounded-full z-10 shadow">${p.badge}</span>` : ''}
+          <div class="img-square">
+            <img src="${img}" alt="${p.name}" loading="lazy">
+            <span class="absolute bottom-1.5 right-1.5 md:bottom-2 md:right-2 text-[10px] md:text-xs bg-white/90 px-1.5 md:px-2 py-0.5 rounded-full text-gray-700 shadow-sm">${p.category}</span>
+          </div>
+          <div class="p-3 md:p-4 flex-1 flex flex-col">
+            <h3 class="font-medium md:font-semibold text-gray-800 text-sm md:text-base line-clamp-2 leading-snug">${p.name}</h3>
+            <div class="flex items-center justify-between mt-auto pt-3">
+              <span class="text-lg md:text-xl font-bold text-green-700">KES ${p.price.toLocaleString()}</span>
+              <div class="flex gap-1">
+                <button data-id="${p.id}" class="quick-view-btn text-gray-500 hover:text-green-700 p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition"><i class="fas fa-eye text-sm md:text-base"></i></button>
+                <button data-id="${p.id}" class="add-to-cart-btn bg-green-100 hover:bg-green-200 text-green-800 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-medium transition"><i class="fas fa-plus mr-1"></i>Add</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>`;
+      `;
     }).join('');
     attachListeners();
   }
